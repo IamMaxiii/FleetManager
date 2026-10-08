@@ -2,6 +2,7 @@ using System.Windows.Input;
 using FleetManager.Core;
 using FleetManager.Models;
 using FleetManager.Telemetry;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -81,7 +82,7 @@ public sealed class SaltoTiempoViewModel : ObjetoObservable, IDisposable
     {
         if (!LecturaCampos.Hora(HoraDestino, out TimeSpan hora))
         {
-            Mensaje = "Escribe la hora con el formato HH:mm (por ejemplo, 06:00).";
+            Mensaje = Textos.T("Salto.HoraMal");
             return Task.CompletedTask;
         }
 
@@ -102,17 +103,17 @@ public sealed class SaltoTiempoViewModel : ObjetoObservable, IDisposable
 
         try
         {
-            Mensaje = $"Saltando a {FechaJuego.TextoDiaYHora(objetivo)}… no toques el teclado.";
+            Mensaje = Textos.T("Salto.Saltando", FechaJuego.TextoDiaYHora(objetivo));
 
             if (!await control.EnviarComando(SaltoTiempo.Comando(objetivo)))
             {
-                Mensaje = "No se encuentra la ventana del juego.";
+                Mensaje = Textos.T("Salto.SinVentana");
                 return;
             }
 
             Mensaje = await EsperarHora(objetivo)
-                ? $"Hecho: ahora es {FechaJuego.TextoDiaYHora(servicio.Datos.HoraJuego)}. El salto cuenta como descanso."
-                : "La hora del juego no ha cambiado. Comprueba que la consola se abre con la tecla º y vuelve a intentarlo.";
+                ? Textos.T("Salto.Hecho", FechaJuego.TextoDiaYHora(servicio.Datos.HoraJuego))
+                : Textos.T("Salto.NoCambio");
         }
         finally
         {
@@ -147,19 +148,18 @@ public sealed class SaltoTiempoViewModel : ObjetoObservable, IDisposable
     private void ActivarConsola()
     {
         if (!dialogos.Confirmar(
-                "Para saltar el tiempo, FleetManager tiene que activar la consola del juego en su archivo " +
-                "config.cfg (se guarda antes una copia del original). ¿Activarla?"))
+                Textos.T("Salto.ConfirmarConsola")))
         {
             return;
         }
 
         Mensaje = control.ActivarConsola() switch
         {
-            ResultadoActivacion.Hecho => "Consola activada. Ya puedes abrir el juego.",
-            ResultadoActivacion.YaEstaba => "La consola ya estaba activada.",
-            ResultadoActivacion.JuegoAbierto => "Cierra el juego y vuelve a pulsar: si no, al cerrarse borraría el cambio.",
-            ResultadoActivacion.ConfiguracionNoEncontrada => "No se encuentra config.cfg del juego en Documentos\\Euro Truck Simulator 2.",
-            _ => "No se pudo cambiar config.cfg. Mira el registro de FleetManager."
+            ResultadoActivacion.Hecho => Textos.T("Salto.ConsolaActivada"),
+            ResultadoActivacion.YaEstaba => Textos.T("Salto.ConsolaYaEstaba"),
+            ResultadoActivacion.JuegoAbierto => Textos.T("Salto.CierraJuego"),
+            ResultadoActivacion.ConfiguracionNoEncontrada => Textos.T("Salto.SinConfig"),
+            _ => Textos.T("Salto.ConfigError")
         };
 
         ConsolaActivada = control.ConsolaActivada();

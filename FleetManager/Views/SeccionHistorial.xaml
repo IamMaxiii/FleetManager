@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:FleetManager.ViewModels"
              xmlns:vistas="clr-namespace:FleetManager.Views"
+             xmlns:i="clr-namespace:FleetManager.Idiomas"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:HistorialViewModel}">
 
@@ -32,11 +33,11 @@
             <StackPanel>
                 <TextBlock Text="{Binding Titulo}" Style="{StaticResource TituloPanel}" />
 
-                <TextBlock Text="Origen" Style="{StaticResource Etiqueta}" />
+                <TextBlock Text="{i:Texto Historial.Origen}" Style="{StaticResource Etiqueta}" />
                 <TextBox Text="{Binding Origen}" />
-                <TextBlock Text="Destino" Style="{StaticResource Etiqueta}" />
+                <TextBlock Text="{i:Texto Historial.Destino}" Style="{StaticResource Etiqueta}" />
                 <TextBox Text="{Binding Destino}" />
-                <TextBlock Text="Carga" Style="{StaticResource Etiqueta}" />
+                <TextBlock Text="{i:Texto Camion.Carga}" Style="{StaticResource Etiqueta}" />
                 <TextBox Text="{Binding Carga}" />
 
                 <Grid Margin="0,6,0,0">
@@ -48,15 +49,15 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel>
-                        <TextBlock Text="Km" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Text="{i:Texto Historial.Km}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding Kilometros}" />
                     </StackPanel>
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Media" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Text="{i:Texto Historial.Media}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding VelocidadMedia}" />
                     </StackPanel>
                     <StackPanel Grid.Column="4">
-                        <TextBlock Text="Máxima" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Text="{i:Texto Historial.Maxima}" Style="{StaticResource Etiqueta}" />
                         <TextBox Text="{Binding VelocidadMaxima}" />
                     </StackPanel>
                 </Grid>
@@ -73,24 +74,24 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="1" Text="Día" Style="{StaticResource Etiqueta}" />
-                    <TextBlock Grid.Column="3" Text="Hora (HH:mm)" Style="{StaticResource Etiqueta}" />
-                    <TextBlock Grid.Row="1" Text="Inicio" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Column="1" Text="{i:Texto Historial.Dia}" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Column="3" Text="{i:Texto Historial.HoraFormato}" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Row="1" Text="{i:Texto Historial.Inicio}" Style="{StaticResource Etiqueta}" />
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DiaInicio}" />
                     <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding HoraInicio}" />
-                    <TextBlock Grid.Row="2" Text="Fin" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Row="2" Text="{i:Texto Historial.Fin}" Style="{StaticResource Etiqueta}" />
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DiaFin}" />
                     <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding HoraFin}" />
                 </Grid>
 
-                <CheckBox Content="Falta de velocidad" IsChecked="{Binding FaltaVelocidad}" Margin="0,10,0,0" />
-                <CheckBox Content="Falta de conducción" IsChecked="{Binding FaltaConduccion}" />
+                <CheckBox Content="{i:Texto Historial.FaltaVelocidad}" IsChecked="{Binding FaltaVelocidad}" Margin="0,10,0,0" />
+                <CheckBox Content="{i:Texto Historial.FaltaConduccion}" IsChecked="{Binding FaltaConduccion}" />
 
                 <TextBlock Text="{Binding Errores}" Style="{StaticResource TextoErrores}" />
 
                 <WrapPanel Margin="0,12,0,0">
-                    <Button Content="Guardar" Command="{Binding ComandoGuardar}" />
-                    <Button Content="Descartar" Command="{Binding ComandoDescartar}" />
+                    <Button Content="{i:Texto Comun.Guardar}" Command="{Binding ComandoGuardar}" />
+                    <Button Content="{i:Texto Historial.Descartar}" Command="{Binding ComandoDescartar}" />
                 </WrapPanel>
             </StackPanel>
         </DataTemplate>
@@ -100,7 +101,7 @@
             <StackPanel>
                 <TextBlock Text="{Binding Titulo}" Style="{StaticResource TituloPanel}" />
 
-                <TextBlock Text="La jornada abierta no se puede editar: ciérrala primero."
+                <TextBlock Text="{i:Texto Historial.AbiertaNoEditable}"
                            Foreground="{StaticResource Pincel.Aviso}"
                            TextWrapping="Wrap"
                            Margin="0,0,0,8">
@@ -127,12 +128,12 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Column="1" Text="Día" Style="{StaticResource Etiqueta}" />
-                    <TextBlock Grid.Column="3" Text="Hora (HH:mm)" Style="{StaticResource Etiqueta}" />
-                    <TextBlock Grid.Row="1" Text="Inicio" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Column="1" Text="{i:Texto Historial.Dia}" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Column="3" Text="{i:Texto Historial.HoraFormato}" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Row="1" Text="{i:Texto Historial.Inicio}" Style="{StaticResource Etiqueta}" />
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding DiaInicio}" />
                     <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding HoraInicio}" />
-                    <TextBlock Grid.Row="2" Text="Fin" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Grid.Row="2" Text="{i:Texto Historial.Fin}" Style="{StaticResource Etiqueta}" />
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding DiaFin}" />
                     <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding HoraFin}" />
                 </Grid>
@@ -140,11 +141,11 @@
                 <TextBlock Text="{Binding Errores}" Style="{StaticResource TextoErrores}" />
 
                 <WrapPanel Margin="0,12,0,0">
-                    <Button Content="Guardar" Command="{Binding ComandoGuardar}" />
-                    <Button Content="Descartar" Command="{Binding ComandoDescartar}" />
+                    <Button Content="{i:Texto Comun.Guardar}" Command="{Binding ComandoGuardar}" />
+                    <Button Content="{i:Texto Historial.Descartar}" Command="{Binding ComandoDescartar}" />
                 </WrapPanel>
 
-                <TextBlock Text="Para editar un trayecto, elígelo en la tabla."
+                <TextBlock Text="{i:Texto Historial.ParaEditar}"
                            FontSize="11"
                            Margin="0,8,0,0"
                            TextWrapping="Wrap"
@@ -167,17 +168,17 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.ColumnSpan="4" Text="Historial" Style="{StaticResource TituloSeccion}" />
+        <TextBlock Grid.ColumnSpan="4" Text="{i:Texto Menu.Historial}" Style="{StaticResource TituloSeccion}" />
 
         <!-- ===== Botones y mensaje ===== -->
         <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,0,0,12">
             <WrapPanel>
-                <Button Content="Exportar a CSV" Command="{Binding ComandoExportar}"
-                        ToolTip="Exporta los trayectos elegidos en la tabla o, si no hay ninguno elegido, todos los que se ven." />
-                <Button Content="Exportar todo" Command="{Binding ComandoExportarTodo}" />
-                <Button Content="Borrar trayectos elegidos" Command="{Binding ComandoBorrarSeleccionados}" Margin="24,0,8,8" />
-                <Button Content="Borrar jornada" Command="{Binding ComandoBorrarJornada}" />
-                <Button Content="Borrar todo" Command="{Binding ComandoBorrarTodo}" />
+                <Button Content="{i:Texto Historial.Exportar}" Command="{Binding ComandoExportar}"
+                        ToolTip="{i:Texto Historial.ExportarAyuda}" />
+                <Button Content="{i:Texto Historial.ExportarTodo}" Command="{Binding ComandoExportarTodo}" />
+                <Button Content="{i:Texto Historial.BorrarElegidos}" Command="{Binding ComandoBorrarSeleccionados}" Margin="24,0,8,8" />
+                <Button Content="{i:Texto Historial.BorrarJornada}" Command="{Binding ComandoBorrarJornada}" />
+                <Button Content="{i:Texto Historial.BorrarTodo}" Command="{Binding ComandoBorrarTodo}" />
             </WrapPanel>
             <TextBlock Text="{Binding Mensaje}" TextWrapping="Wrap" Foreground="{StaticResource Pincel.Informacion}" />
         </StackPanel>
@@ -220,7 +221,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <CheckBox Content="Ver en el mapa" IsChecked="{Binding VerMapa}" Style="{StaticResource Interruptor}" Margin="4,0,0,10" />
+            <CheckBox Content="{i:Texto Historial.VerMapa}" IsChecked="{Binding VerMapa}" Style="{StaticResource Interruptor}" Margin="4,0,0,10" />
 
             <!-- Mapa del recorrido de lo elegido (la parte elegida, en naranja). -->
             <Border Grid.Row="1" CornerRadius="8" ClipToBounds="True" Background="#161616"
@@ -246,17 +247,17 @@
                 Visibility="{Binding VerMapa, Converter={StaticResource InversoAVisibilidad}}">
             <DataGrid x:Name="Tabla" ItemsSource="{Binding Filas}" SelectionChanged="Tabla_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Jornada" Binding="{Binding NumeroJornada}" />
-                    <DataGridTextColumn Header="Día" Binding="{Binding Dia}" SortMemberPath="Inicio" />
-                    <DataGridTextColumn Header="Inicio" Binding="{Binding HoraInicio}" SortMemberPath="Inicio" />
-                    <DataGridTextColumn Header="Fin" Binding="{Binding HoraFin}" />
-                    <DataGridTextColumn Header="Origen" Binding="{Binding Origen}" />
-                    <DataGridTextColumn Header="Destino" Binding="{Binding Destino}" />
-                    <DataGridTextColumn Header="Carga" Binding="{Binding Carga}" />
-                    <DataGridTextColumn Header="Km" Binding="{Binding Kilometros, StringFormat=N1}" />
-                    <DataGridTextColumn Header="Media" Binding="{Binding VelocidadMedia, StringFormat=N0}" />
-                    <DataGridTextColumn Header="Máx." Binding="{Binding VelocidadMaxima, StringFormat=N0}" />
-                    <DataGridTextColumn Header="Faltas" Binding="{Binding Faltas}" Foreground="{StaticResource Pincel.Urgente}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.ColJornada}" Binding="{Binding NumeroJornada}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Dia}" Binding="{Binding Dia}" SortMemberPath="Inicio" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Inicio}" Binding="{Binding HoraInicio}" SortMemberPath="Inicio" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Fin}" Binding="{Binding HoraFin}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Origen}" Binding="{Binding Origen}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Destino}" Binding="{Binding Destino}" />
+                    <DataGridTextColumn Header="{i:Texto Camion.Carga}" Binding="{Binding Carga}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Km}" Binding="{Binding Kilometros, StringFormat=N1}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.Media}" Binding="{Binding VelocidadMedia, StringFormat=N0}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.ColMaxima}" Binding="{Binding VelocidadMaxima, StringFormat=N0}" />
+                    <DataGridTextColumn Header="{i:Texto Historial.ColFaltas}" Binding="{Binding Faltas}" Foreground="{StaticResource Pincel.Urgente}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

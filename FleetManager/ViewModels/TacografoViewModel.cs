@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.Models;
 
 namespace FleetManager.ViewModels;
@@ -109,15 +110,15 @@ public sealed class TacografoViewModel : ObjetoObservable, IDisposable
 
     // ---------- Barras ----------
 
-    public IndicadorTiempo Continua { get; } = new("Conducción continua");
+    public IndicadorTiempo Continua { get; } = new(Textos.T("Indicador.ConduccionContinua"));
 
-    public IndicadorTiempo Diaria { get; } = new("Conducción diaria");
+    public IndicadorTiempo Diaria { get; } = new(Textos.T("Indicador.ConduccionDiaria"));
 
-    public IndicadorTiempo Semanal { get; } = new("Conducción semanal");
+    public IndicadorTiempo Semanal { get; } = new(Textos.T("Indicador.ConduccionSemanal"));
 
-    public IndicadorTiempo Bisemanal { get; } = new("Conducción bisemanal");
+    public IndicadorTiempo Bisemanal { get; } = new(Textos.T("Indicador.ConduccionBisemanal"));
 
-    public IndicadorTiempo DescansoDiario { get; } = new("Descanso diario");
+    public IndicadorTiempo DescansoDiario { get; } = new(Textos.T("Indicador.DescansoDiario"));
 
     // ---------- Pausa, plazos y faltas ----------
 
@@ -181,7 +182,7 @@ public sealed class TacografoViewModel : ObjetoObservable, IDisposable
 
     private void CerrarJornada()
     {
-        if (dialogos.Confirmar("¿Cerrar la jornada? El trayecto en curso pasará al historial."))
+        if (dialogos.Confirmar(Textos.T("Tarjeta.ConfirmarSacar")))
         {
             servicio.CerrarJornada();
         }
@@ -203,34 +204,34 @@ public sealed class TacografoViewModel : ObjetoObservable, IDisposable
         botonesCambiados |= Asignar(ref juegoConectado, datos.Conectado, nameof(JuegoConectado));
         TextoEstadoJuego = datos.Estado switch
         {
-            EstadoJuego.Detectado => datos.Pausado ? "Juego en pausa" : "Juego detectado",
-            EstadoJuego.JuegoNoCompatible => "Juego no compatible",
-            EstadoJuego.NoResponde => "El juego no responde",
-            EstadoJuego.Error => "Error del plugin",
-            _ => "Juego no detectado"
+            EstadoJuego.Detectado => datos.Pausado ? Textos.T("Juego.EnPausa") : Textos.T("Juego.Detectado"),
+            EstadoJuego.JuegoNoCompatible => Textos.T("Juego.NoCompatible"),
+            EstadoJuego.NoResponde => Textos.T("Juego.NoResponde"),
+            EstadoJuego.Error => Textos.T("Juego.ErrorPlugin"),
+            _ => Textos.T("Juego.NoDetectado")
         };
         DetalleJuego = datos.Estado switch
         {
-            EstadoJuego.Detectado => $"Plugin {datos.VersionPlugin}",
-            EstadoJuego.JuegoNoCompatible => "El juego no es ETS2",
-            EstadoJuego.NoResponde => "¿Colgado o cerrado de golpe?",
+            EstadoJuego.Detectado => Textos.T("Juego.Plugin", datos.VersionPlugin),
+            EstadoJuego.JuegoNoCompatible => Textos.T("Juego.NoEsEts2"),
+            EstadoJuego.NoResponde => Textos.T("Juego.Colgado"),
             EstadoJuego.Error => datos.Error ?? "",
-            _ => "Abre ETS2 con el plugin"
+            _ => Textos.T("Juego.AbreEts2")
         };
         HoraJuego = datos.Conectado ? Formato.HoraJuego(datos.HoraJuego) : "—";
         Velocidad = datos.Conectado ? datos.Velocidad.ToString("0") : "—";
-        LimiteVelocidad = datos.Conectado && datos.LimiteVelocidad > 0 ? $"límite {datos.LimiteVelocidad:0}" : "";
+        LimiteVelocidad = datos.Conectado && datos.LimiteVelocidad > 0 ? Textos.T("Juego.Limite", datos.LimiteVelocidad.ToString("0")) : "";
         NivelVelocidad = servicio.NivelVelocidad;
 
         // Jornada y actividad
         botonesCambiados |= Asignar(ref jornadaAbierta, jornada is not null, nameof(JornadaAbierta));
-        TextoJornada = jornada is null ? "Sin jornada" : $"Jornada {jornada.Numero}";
+        TextoJornada = jornada is null ? Textos.T("Tarjeta.SinTarjeta") : Textos.T("Tarjeta.Jornada", jornada.Numero);
         Actividad = jornada is null ? Actividad.Descanso : estado.ActividadActual;
-        NombreActividad = jornada is null ? "SIN JORNADA" : Formato.Actividad(estado.ActividadActual).ToUpperInvariant();
+        NombreActividad = jornada is null ? Textos.T("Tarjeta.SinTarjeta").ToUpper(Textos.Cultura) : Formato.Actividad(estado.ActividadActual).ToUpper(Textos.Cultura);
         TiempoActividad = jornada is null || !hayRegistro ? "" : Formato.Duracion(estado.TiempoActividadActual);
-        ActividadElegida = servicio.ActividadManual is { } manual ? $"Botón: {Formato.Actividad(manual)}" : "";
+        ActividadElegida = servicio.ActividadManual is { } manual ? Textos.T("Tacografo.Boton", Formato.Actividad(manual)) : "";
         SubtituloActividad = jornada is null
-            ? "Pulsa «Abrir jornada» para empezar"
+            ? Textos.T("Tarjeta.MeteParaEmpezar")
             : ActividadElegida.Length > 0 ? $"{TextoJornada}  ·  {ActividadElegida}" : TextoJornada;
         SiguienteParada = Formato.Duracion(estado.SiguienteParada);
 
@@ -249,17 +250,17 @@ public sealed class TacografoViewModel : ObjetoObservable, IDisposable
         MarcaPausa15 = estado.PrimeraPartePausaHecha || (descansando && estado.DescansoActual >= ReglasUE.PausaPrimeraParte);
         MarcaPausa30 = descansando && estado.PausaRestante == TimeSpan.Zero;
         TextoPausa = descansando
-            ? estado.PausaRestante > TimeSpan.Zero ? $"En pausa · faltan {Formato.Duracion(estado.PausaRestante)}" : "Pausa cumplida"
-            : estado.PrimeraPartePausaHecha ? "Hecha la parte de 15 min · faltan 30" : "Pendiente: 45 min (o 15 + 30)";
+            ? estado.PausaRestante > TimeSpan.Zero ? Textos.T("Pausa.EnPausa", Formato.Duracion(estado.PausaRestante)) : Textos.T("Pausa.Cumplida")
+            : estado.PrimeraPartePausaHecha ? Textos.T("Pausa.Hecha15") : Textos.T("Pausa.Pendiente");
 
         // Plazos y contadores
         PlazoDescansoDiario = hayRegistro ? Formato.HoraJuego(estado.LimiteInicioDescansoDiario) : "—";
         PlazoDescansoSemanal = !hayRegistro ? "—"
-            : estado.DescansoSemanalEnCurso ? "en curso"
+            : estado.DescansoSemanalEnCurso ? Textos.T("Tacografo.EnCurso")
             : Formato.HoraJuego(estado.PlazoDescansoSemanal);
         Amplitud = Formato.Duracion(estado.AmplitudJornada);
-        Ampliaciones = $"{estado.AmpliacionesRestantes} de {ReglasUE.AmpliacionesPorSemana}";
-        Reducidos = $"{estado.DescansosReducidosRestantes} de {ReglasUE.DescansosReducidosMaximos}";
+        Ampliaciones = Textos.T("Comun.XDeY", estado.AmpliacionesRestantes, ReglasUE.AmpliacionesPorSemana);
+        Reducidos = Textos.T("Comun.XDeY", estado.DescansosReducidosRestantes, ReglasUE.DescansosReducidosMaximos);
 
         // Avisos e infracciones (las listas solo se sustituyen si cambian, para no redibujarlas)
         IReadOnlyList<Aviso> nuevosAvisos = GeneradorAvisos.Calcular(estado, jornada is not null);
@@ -281,12 +282,12 @@ public sealed class TacografoViewModel : ObjetoObservable, IDisposable
         // Trayecto y faltas
         Trayecto? enCurso = jornada?.TrayectoEnCurso;
         HayTrayecto = enCurso is not null;
-        Trayecto = enCurso is null ? "Sin trayecto en curso" : $"{Texto(enCurso.Origen)} → {Texto(enCurso.Destino)} · {Texto(enCurso.Carga)}";
+        Trayecto = enCurso is null ? Textos.T("Tacografo.SinTrayecto") : $"{Texto(enCurso.Origen)} → {Texto(enCurso.Destino)} · {Texto(enCurso.Carga)}";
         DatosTrayecto = enCurso is null
             ? ""
-            : $"{Formato.Kilometros(enCurso.Kilometros)} · media {Formato.Velocidad(enCurso.VelocidadMedia)} · máx. {Formato.Velocidad(enCurso.VelocidadMaxima)}" +
-              (enCurso.FaltaVelocidad ? " · falta de velocidad" : "") +
-              (enCurso.FaltaConduccion ? " · falta de conducción" : "");
+            : Textos.T("Tacografo.DatosTrayecto", Formato.Kilometros(enCurso.Kilometros), Formato.Velocidad(enCurso.VelocidadMedia), Formato.Velocidad(enCurso.VelocidadMaxima)) +
+              (enCurso.FaltaVelocidad ? " · " + Textos.T("Tacografo.ConFaltaVelocidad") : "") +
+              (enCurso.FaltaConduccion ? " · " + Textos.T("Tacografo.ConFaltaConduccion") : "");
         FaltasJornada = jornada is null
             ? 0
             : jornada.Trayectos.Append(enCurso).OfType<Trayecto>()

@@ -9,10 +9,10 @@
     <RootNamespace>FleetManager</RootNamespace>
     <AssemblyName>FleetManager</AssemblyName>
     <Product>FleetManager</Product>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <NeutralLanguage>es-ES</NeutralLanguage>
-    <!-- Al publicar, solo los textos de .NET en español (no 13 idiomas). -->
-    <SatelliteResourceLanguages>es</SatelliteResourceLanguages>
+    <!-- Al publicar, los textos de .NET solo en los idiomas de la aplicación. -->
+    <SatelliteResourceLanguages>es;en;de;fr;it;pt;pl;nl;tr</SatelliteResourceLanguages>
     <!-- Logo (se crea con herramientas\crear-logo.ps1). -->
     <ApplicationIcon>Recursos\FleetManager.ico</ApplicationIcon>
   </PropertyGroup>
@@ -22,6 +22,11 @@
     <None Include="..\lib\plugin\scs-telemetry.dll" Link="plugin\scs-telemetry.dll" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\lib\plugin\LICENSE-scs-sdk-plugin.txt" Link="licencias\scs-sdk-plugin.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\ext\ts-map\LICENSE" Link="licencias\ts-map.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Textos de la aplicación, un archivo por idioma, dentro del programa. -->
+  <ItemGroup>
+    <EmbeddedResource Include="Idiomas\*.json" LogicalName="Idiomas.%(Filename).json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 using FleetManager.Models;
 using SCSSdkClient;
 using SCSSdkClient.Object;
+using FleetManager.Idiomas;
 
 namespace FleetManager.Telemetry;
 
@@ -42,7 +43,7 @@ public sealed class LectorJuego : IDisposable
                 return new DatosJuego
                 {
                     Estado = EstadoJuego.Error,
-                    Error = memoria.HookException?.Message ?? "No se pudo abrir la memoria del plugin."
+                    Error = memoria.HookException?.Message ?? Textos.T("Juego.SinMemoria")
                 };
             }
 

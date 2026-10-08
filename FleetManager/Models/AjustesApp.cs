@@ -12,4 +12,7 @@ public sealed class AjustesApp
 
     /// <summary>El mini tacógrafo se muestra al abrir la aplicación.</summary>
     public bool MiniTacografoVisible { get; set; } = true;
+
+    /// <summary>Código del idioma elegido ("es", "en"...); vacío = el de Windows.</summary>
+    public string? Idioma { get; set; }
 }

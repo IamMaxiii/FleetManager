@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows.Input;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.Models;
 
 namespace FleetManager.ViewModels;
@@ -10,21 +11,26 @@ namespace FleetManager.ViewModels;
 /// </summary>
 public static class LecturaCampos
 {
-    private static readonly CultureInfo Espanol = CultureInfo.GetCultureInfo("es-ES");
+    // Coma decimal y punto de miles ("1.234,5"), como en español.
+    private static readonly CultureInfo ComaDecimal = CultureInfo.GetCultureInfo("es-ES");
 
     /// <summary>
-    /// Número decimal con coma ("12,5") o con punto ("12.5"). Un punto entre grupos de
-    /// tres cifras se entiende como separador de miles, a la española ("125.000" = 125000).
+    /// Número decimal con coma ("12,5") o con punto ("12.5"). El separador de miles es el
+    /// del idioma: en los idiomas con coma decimal, un punto entre grupos de tres cifras
+    /// separa miles ("125.000" = 125000); en inglés, la coma ("125,000" = 125000).
     /// </summary>
     public static bool Decimal(string texto, out double valor)
     {
         texto = texto.Trim();
+        bool comaDecimal = Textos.Cultura.NumberFormat.NumberDecimalSeparator == ",";
+        string miles = comaDecimal ? @"\." : ",";
 
         if ((texto.Contains(',') && texto.Contains('.')) ||
-            System.Text.RegularExpressions.Regex.IsMatch(texto, @"^-?\d{1,3}(\.\d{3})+$"))
+            System.Text.RegularExpressions.Regex.IsMatch(texto, $@"^-?\d{{1,3}}({miles}\d{{3}})+$"))
         {
-            // "1.234,5" o "125.000": el punto separa miles.
-            return double.TryParse(texto, NumberStyles.Float | NumberStyles.AllowThousands, Espanol, out valor);
+            // "1.234,5" / "125.000" (o "1,234.5" / "125,000" en inglés): hay separador de miles.
+            CultureInfo formato = comaDecimal ? ComaDecimal : CultureInfo.InvariantCulture;
+            return double.TryParse(texto, NumberStyles.Float | NumberStyles.AllowThousands, formato, out valor);
         }
 
         return double.TryParse(texto.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out valor);
@@ -39,7 +45,7 @@ public static class LecturaCampos
         TimeSpan.TryParseExact(texto.Trim(), [@"h\:mm", @"hh\:mm"], CultureInfo.InvariantCulture, out hora)
         && hora < TimeSpan.FromDays(1);
 
-    public static string Escribir(double valor) => valor.ToString("0.0", Espanol);
+    public static string Escribir(double valor) => valor.ToString("0.0", Textos.Cultura);
 }
 
 /// <summary>
@@ -69,7 +75,7 @@ public sealed class EdicionTrayectoViewModel : ObjetoObservable
     {
         original = trayecto;
         this.alGuardar = alGuardar;
-        Titulo = $"Trayecto de la jornada {jornada.Numero}";
+        Titulo = Textos.T("Edicion.TrayectoDeJornada", jornada.Numero);
 
         ComandoGuardar = new Comando(() => Guardar());
         ComandoDescartar = new Comando(Cargar);
@@ -116,17 +122,17 @@ public sealed class EdicionTrayectoViewModel : ObjetoObservable
 
         if (!LecturaCampos.Decimal(Kilometros, out double km))
         {
-            problemas.Add("Los kilómetros no son un número.");
+            problemas.Add(Textos.T("Edicion.KmMal"));
         }
 
         if (!LecturaCampos.Decimal(VelocidadMedia, out double media) || !LecturaCampos.Decimal(VelocidadMaxima, out double maxima))
         {
-            problemas.Add("Las velocidades no son números.");
+            problemas.Add(Textos.T("Edicion.VelocidadesMal"));
             media = maxima = 0;
         }
 
-        DateTime? inicio = LeerFecha(DiaInicio, HoraInicio, "inicio", problemas);
-        DateTime? fin = LeerFecha(DiaFin, HoraFin, "fin", problemas);
+        DateTime? inicio = LeerFecha(DiaInicio, HoraInicio, "Inicio", problemas);
+        DateTime? fin = LeerFecha(DiaFin, HoraFin, "Fin", problemas);
 
         if (problemas.Count == 0)
         {
@@ -181,17 +187,18 @@ public sealed class EdicionTrayectoViewModel : ObjetoObservable
         Errores = "";
     }
 
+    /// <param name="cual">"Inicio" o "Fin" (parte de la clave del mensaje).</param>
     internal static DateTime? LeerFecha(string dia, string hora, string cual, List<string> problemas)
     {
         if (!LecturaCampos.Dia(dia, out int numeroDia))
         {
-            problemas.Add($"El día de {cual} debe ser un número de 1 en adelante.");
+            problemas.Add(Textos.T($"Edicion.Dia{cual}Mal"));
             return null;
         }
 
         if (!LecturaCampos.Hora(hora, out TimeSpan momento))
         {
-            problemas.Add($"La hora de {cual} debe tener el formato HH:mm (por ejemplo, 08:30).");
+            problemas.Add(Textos.T($"Edicion.Hora{cual}Mal"));
             return null;
         }
 
@@ -217,7 +224,7 @@ public sealed class EdicionJornadaViewModel : ObjetoObservable
     {
         original = jornada;
         this.alGuardar = alGuardar;
-        Titulo = $"Jornada {jornada.Numero}";
+        Titulo = Textos.T("Tarjeta.Jornada", jornada.Numero);
         Editable = !jornada.Abierta;
 
         ComandoGuardar = new Comando(() => Guardar(), () => Editable);
@@ -253,8 +260,8 @@ public sealed class EdicionJornadaViewModel : ObjetoObservable
         }
 
         var problemas = new List<string>();
-        DateTime? inicio = EdicionTrayectoViewModel.LeerFecha(DiaInicio, HoraInicio, "inicio", problemas);
-        DateTime? fin = EdicionTrayectoViewModel.LeerFecha(DiaFin, HoraFin, "fin", problemas);
+        DateTime? inicio = EdicionTrayectoViewModel.LeerFecha(DiaInicio, HoraInicio, "Inicio", problemas);
+        DateTime? fin = EdicionTrayectoViewModel.LeerFecha(DiaFin, HoraFin, "Fin", problemas);
 
         if (problemas.Count == 0)
         {

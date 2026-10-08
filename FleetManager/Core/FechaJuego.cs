@@ -1,3 +1,5 @@
+using FleetManager.Idiomas;
+
 namespace FleetManager.Core;
 
 /// <summary>
@@ -7,16 +9,14 @@ namespace FleetManager.Core;
 /// </summary>
 public static class FechaJuego
 {
-    private static readonly string[] Dias = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"];
-
     /// <summary>Número de día del juego, empezando en 1.</summary>
     public static int NumeroDia(DateTime fecha) => (int)(fecha.Date - DateTime.MinValue).TotalDays + 1;
 
     /// <summary>Abreviatura del día de la semana ("jue").</summary>
-    public static string NombreDia(DateTime fecha) => Dias[((int)fecha.DayOfWeek + 6) % 7];
+public static string NombreDia(DateTime fecha) => Textos.T("Fecha.DiasCortos").Split(',')[((int)fecha.DayOfWeek + 6) % 7];
 
     /// <summary>"Día 176 (jue)".</summary>
-    public static string TextoDia(DateTime fecha) => $"Día {NumeroDia(fecha)} ({NombreDia(fecha)})";
+    public static string TextoDia(DateTime fecha) => Textos.T("Fecha.Dia", NumeroDia(fecha), NombreDia(fecha));
 
     /// <summary>"14:32".</summary>
     public static string TextoHora(DateTime fecha) => fecha.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture);

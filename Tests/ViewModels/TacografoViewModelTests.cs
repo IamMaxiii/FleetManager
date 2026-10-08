@@ -42,12 +42,12 @@ public sealed class TacografoViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Sin_jornada_indica_como_empezar()
+    public void Sin_tarjeta_indica_como_empezar()
     {
         juego.Leer();
 
-        Assert.Equal("SIN JORNADA", tacografo.NombreActividad);
-        Assert.Equal("Pulsa «Abrir jornada» para empezar", tacografo.SubtituloActividad);
+        Assert.Equal("SIN TARJETA", tacografo.NombreActividad);
+        Assert.Equal("Mete la tarjeta para empezar", tacografo.SubtituloActividad);
         Assert.False(tacografo.JornadaAbierta);
         Assert.True(tacografo.JuegoConectado);
     }

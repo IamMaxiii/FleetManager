@@ -1,8 +1,11 @@
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.Storage;
 using FleetManager.Storage.Importacion;
 using FleetManager.Telemetry;
@@ -19,6 +22,12 @@ namespace FleetManager;
 public partial class App : Application
 {
     private const string Titulo = "FleetManager";
+    private const string NombreInstanciaUnica = @"Local\FleetManager.InstanciaUnica";
+
+    /// <summary>Argumento con el que FleetManager se abre a sí mismo al reiniciarse.</summary>
+    private const string ArgumentoReinicio = "--reinicio";
+
+    private static readonly TimeSpan EsperaReinicio = TimeSpan.FromSeconds(15);
 
     // Cada cuánto se comprueba si toca hacer el guardado automático.
     private static readonly TimeSpan IntervaloComprobacionGuardado = TimeSpan.FromSeconds(5);
@@ -39,11 +48,6 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        // Los números que formatea WPF (por ejemplo, en la tabla del historial) en español: "12,5".
-        FrameworkElement.LanguageProperty.OverrideMetadata(
-            typeof(FrameworkElement),
-            new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage("es-ES")));
-
         // Arrancado con permiso de administrador solo para copiar el plugin al juego: copia y sale.
         if (e.Args.Length == 2 && e.Args[0] == InstaladorPlugin.ArgumentoInstalar)
         {
@@ -52,14 +56,28 @@ public partial class App : Application
             return;
         }
 
+        // Hasta leer los ajustes, el idioma de Windows.
+        Textos.Usar(Textos.ElegirSegunWindows(CultureInfo.CurrentUICulture));
+
         // Dos copias de FleetManager abiertas a la vez podrían pisarse los datos al guardar.
-        instanciaUnica = new Mutex(initiallyOwned: true, @"Local\FleetManager.InstanciaUnica", out bool esLaPrimera);
+        // Al reiniciar (cambio de idioma) se espera a que la copia anterior termine de cerrarse.
+        instanciaUnica = new Mutex(initiallyOwned: false, NombreInstanciaUnica);
+        bool esLaPrimera;
+
+        try
+        {
+            esLaPrimera = instanciaUnica.WaitOne(e.Args.Contains(ArgumentoReinicio) ? EsperaReinicio : TimeSpan.Zero);
+        }
+        catch (AbandonedMutexException)
+        {
+            esLaPrimera = true; // la copia anterior se cerró sin soltarlo
+        }
 
         if (!esLaPrimera)
         {
             instanciaUnica.Dispose();
             instanciaUnica = null;
-            MessageBox.Show("FleetManager ya está abierto.", Titulo, MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(Textos.T("App.YaAbierto"), Titulo, MessageBoxButton.OK, MessageBoxImage.Information);
             Shutdown();
             return;
         }
@@ -73,11 +91,12 @@ public partial class App : Application
 
         almacen = new AlmacenDatos(rutas, registro, TimeProvider.System);
         almacen.Cargar();
+        UsarIdioma(almacen.Ajustes.Idioma);
 
         if (almacen.AvisosCarga.Count > 0)
         {
             MessageBox.Show(
-                "Ha habido problemas al cargar los datos:\n\n" + string.Join("\n\n", almacen.AvisosCarga),
+                Textos.T("App.ProblemasCarga") + "\n\n" + string.Join("\n\n", almacen.AvisosCarga),
                 Titulo,
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -107,7 +126,8 @@ public partial class App : Application
                 InstaladorPlugin.PluginJuntoALaApp,
                 FleetManager.MapaJuego.BuscadorJuego.Buscar,
                 InstaladorPlugin.CopiarComoAdministrador,
-                registro));
+                registro),
+            Reiniciar);
 
         MainWindow = new MainWindow(mainViewModel);
         MainWindow.Show();
@@ -136,7 +156,7 @@ public partial class App : Application
         if (almacen is not null && !almacen.GuardarCambiosPendientes())
         {
             MessageBox.Show(
-                $"No se han podido guardar los últimos cambios:\n\n{almacen.UltimoError}",
+                Textos.T("App.NoGuardado", almacen.UltimoError),
                 Titulo,
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
@@ -153,6 +173,31 @@ public partial class App : Application
         }
 
         base.OnExit(e);
+    }
+
+    /// <summary>
+    /// Idioma de los textos y de los números (el elegido o, si no hay, el de Windows).
+    /// Solo se puede fijar una vez por ejecución: cambiarlo reinicia la aplicación.
+    /// </summary>
+    private static void UsarIdioma(string? codigo)
+    {
+        Textos.Usar(string.IsNullOrEmpty(codigo) ? Textos.ElegirSegunWindows(CultureInfo.CurrentUICulture) : codigo);
+        CultureInfo.CurrentCulture = Textos.Cultura;
+        CultureInfo.CurrentUICulture = Textos.Cultura;
+        CultureInfo.DefaultThreadCurrentCulture = Textos.Cultura;
+        CultureInfo.DefaultThreadCurrentUICulture = Textos.Cultura;
+
+        // Los números que formatea WPF (por ejemplo, en la tabla del historial) en ese idioma.
+        FrameworkElement.LanguageProperty.OverrideMetadata(
+            typeof(FrameworkElement),
+            new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage(Textos.Cultura.IetfLanguageTag)));
+    }
+
+    /// <summary>Abre otra vez FleetManager (que espera a que esta copia se cierre) y cierra esta.</summary>
+    private void Reiniciar()
+    {
+        Process.Start(new ProcessStartInfo(Environment.ProcessPath!, ArgumentoReinicio) { UseShellExecute = false });
+        Shutdown();
     }
 
     private static void MostrarMini(MiniTacografoWindow mini, bool visible)
@@ -180,10 +225,8 @@ public partial class App : Application
         }
 
         var respuesta = MessageBox.Show(
-            "Se han encontrado datos de la versión anterior de FleetManager:\n\n" +
-            $"{rutas.SesionesAntiguas}\n\n" +
-            "¿Quieres importarlos? El archivo antiguo no se modificará.",
-            "Importar datos antiguos",
+            Textos.T("Importar.Pregunta", rutas.SesionesAntiguas),
+            Textos.T("Importar.Titulo"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Question);
 
@@ -210,7 +253,7 @@ public partial class App : Application
                 catch (Exception ex) when (ex is FormatoAntiguoException or IOException or UnauthorizedAccessException)
                 {
                     registro.Error("No se pudo importar el perfil antiguo", ex);
-                    avisos.Add($"El perfil del conductor no se pudo importar: {ex.Message}");
+                    avisos.Add(Textos.T("Importar.PerfilNo", ex.Message));
                 }
             }
 
@@ -222,14 +265,14 @@ public partial class App : Application
                 $"{resultado.Historial.NumeroTrayectos} trayectos, {avisos.Count} avisos.");
 
             var mensaje = new StringBuilder()
-                .AppendLine($"Importación terminada (formato {resultado.Formato}).")
+                .AppendLine(Textos.T("Importar.Terminada", resultado.Formato))
                 .AppendLine()
-                .AppendLine($"Jornadas: {resultado.Historial.Jornadas.Count}")
-                .AppendLine($"Trayectos: {resultado.Historial.NumeroTrayectos}");
+                .AppendLine(Textos.T("Importar.Jornadas", resultado.Historial.Jornadas.Count))
+                .AppendLine(Textos.T("Importar.Trayectos", resultado.Historial.NumeroTrayectos));
 
             if (avisos.Count > 0)
             {
-                mensaje.AppendLine().AppendLine("Avisos:");
+                mensaje.AppendLine().AppendLine(Textos.T("Importar.Avisos"));
 
                 foreach (string aviso in avisos)
                 {
@@ -237,16 +280,15 @@ public partial class App : Application
                 }
             }
 
-            MessageBox.Show(mensaje.ToString(), "Importar datos antiguos", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(mensaje.ToString(), Textos.T("Importar.Titulo"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex) when (ex is FormatoAntiguoException or IOException or UnauthorizedAccessException)
         {
             registro.Error("No se pudieron importar los datos antiguos", ex);
 
             MessageBox.Show(
-                "No se han podido importar los datos antiguos. No se ha importado nada y el archivo " +
-                $"antiguo sigue intacto.\n\n{ex.Message}",
-                "Importar datos antiguos",
+                Textos.T("Importar.Error", ex.Message),
+                Textos.T("Importar.Titulo"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Warning);
         }
@@ -258,8 +300,7 @@ public partial class App : Application
         almacen?.GuardarCambiosPendientes();
 
         MessageBox.Show(
-            "Ha ocurrido un error inesperado. Se ha anotado en registro.log y los datos se han guardado.\n\n" +
-            e.Exception.Message,
+            Textos.T("App.ErrorInesperado", e.Exception.Message),
             Titulo,
             MessageBoxButton.OK,
             MessageBoxImage.Error);

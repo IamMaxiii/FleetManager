@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.Models;
 
 namespace FleetManager.ViewModels;
@@ -113,9 +114,9 @@ public sealed class FilaTrayecto
 
     public string Faltas => (Trayecto.FaltaVelocidad, Trayecto.FaltaConduccion) switch
     {
-        (true, true) => "Velocidad y conducción",
-        (true, false) => "Velocidad",
-        (false, true) => "Conducción",
+        (true, true) => Textos.T("Faltas.Ambas"),
+        (true, false) => Textos.T("Faltas.Velocidad"),
+        (false, true) => Textos.T("Faltas.Conduccion"),
         _ => ""
     };
 }

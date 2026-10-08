@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:FleetManager.ViewModels"
+             xmlns:i="clr-namespace:FleetManager.Idiomas"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:CamionViewModel}">
 
@@ -14,7 +15,7 @@
     </UserControl.Resources>
 
     <StackPanel>
-        <TextBlock Text="Camión" Style="{StaticResource TituloSeccion}" />
+        <TextBlock Text="{i:Texto Menu.Camion}" Style="{StaticResource TituloSeccion}" />
 
         <!-- Sin conexión se muestran los últimos datos conocidos, con este aviso. -->
         <Border Background="{StaticResource Pincel.Panel}" CornerRadius="6" Padding="14,8" Margin="0,0,0,12">
@@ -28,7 +29,7 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <TextBlock Text="Sin conexión con el juego: se muestran los últimos datos conocidos."
+            <TextBlock Text="{i:Texto Camion.SinConexion}"
                        Foreground="{StaticResource Pincel.Aviso}" />
         </Border>
 
@@ -54,11 +55,11 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Matrícula" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Text="{i:Texto Camion.Matricula}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Column="1" Text="{Binding Matricula}" Style="{StaticResource Valor}" />
-                            <TextBlock Grid.Row="1" Text="Odómetro" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Grid.Row="1" Text="{i:Texto Camion.Odometro}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Odometro}" Style="{StaticResource Valor}" />
-                            <TextBlock Grid.Row="2" Text="Posición" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Grid.Row="2" Text="{i:Texto Camion.Posicion}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Posicion}" Style="{StaticResource Valor}" />
                         </Grid>
                         <ContentControl Content="{Binding Combustible}" />
@@ -69,7 +70,7 @@
                 <!-- ===== Remolque ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,16,0,0">
                     <StackPanel>
-                        <TextBlock Text="Remolque" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Camion.Remolque}" Style="{StaticResource TituloPanel}" />
                         <TextBlock Text="{Binding Remolque}" Style="{StaticResource Valor}" Margin="0,0,0,10" />
                         <ContentControl Content="{Binding DesgasteRemolque}"
                                         Visibility="{Binding HayRemolque, Converter={StaticResource SiNoAVisibilidad}}" />
@@ -81,7 +82,7 @@
                 <!-- ===== Desgastes ===== -->
                 <Border Style="{StaticResource Panel}">
                     <StackPanel>
-                        <TextBlock Text="Desgaste" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Camion.Desgaste}" Style="{StaticResource TituloPanel}" />
                         <ContentControl Content="{Binding DesgasteMotor}" />
                         <ContentControl Content="{Binding DesgasteTransmision}" />
                         <ContentControl Content="{Binding DesgasteCabina}" />
@@ -93,7 +94,7 @@
                 <!-- ===== Encargo ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,16,0,0">
                     <StackPanel>
-                        <TextBlock Text="Encargo" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Inicio.Encargo}" Style="{StaticResource TituloPanel}" />
                         <TextBlock Text="{Binding Ruta}" Style="{StaticResource Valor}" FontSize="15" />
                         <Grid Margin="0,6,0,10" Visibility="{Binding HayEncargo, Converter={StaticResource SiNoAVisibilidad}}">
                             <Grid.ColumnDefinitions>
@@ -106,13 +107,13 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Carga" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Text="{i:Texto Camion.Carga}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Column="1" Text="{Binding Carga}" Style="{StaticResource Valor}" />
-                            <TextBlock Grid.Row="1" Text="Peso" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Grid.Row="1" Text="{i:Texto Camion.Peso}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Peso}" Style="{StaticResource Valor}" />
-                            <TextBlock Grid.Row="2" Text="Distancia" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Grid.Row="2" Text="{i:Texto Camion.Distancia}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Distancia}" Style="{StaticResource Valor}" />
-                            <TextBlock Grid.Row="3" Text="Entrega antes de" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Grid.Row="3" Text="{i:Texto Inicio.EntregaAntesDe}" Style="{StaticResource Etiqueta}" />
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Entrega}" Style="{StaticResource Valor}" />
                         </Grid>
                         <ContentControl Content="{Binding DanoCarga}"

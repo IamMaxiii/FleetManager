@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using FleetManager.Idiomas;
 using FleetManager.Telemetry;
 
 namespace FleetManager.ViewModels;
@@ -61,9 +62,9 @@ public sealed class PluginViewModel : ObjetoObservable
 
         (Aviso, TextoBoton) = Estado switch
         {
-            EstadoPlugin.Falta => ("Falta el plugin de telemetría en el juego: sin él FleetManager no puede leer ETS2.", "Instalar plugin"),
-            EstadoPlugin.OtraVersion => ("El plugin de telemetría del juego es de otra versión y puede no funcionar con FleetManager.", "Actualizar plugin"),
-            EstadoPlugin.JuegoNoEncontrado => ("No se encuentra ETS2 en Steam: no se puede comprobar el plugin de telemetría.", ""),
+            EstadoPlugin.Falta => (Textos.T("Plugin.Falta"), Textos.T("Plugin.Instalar")),
+            EstadoPlugin.OtraVersion => (Textos.T("Plugin.OtraVersion"), Textos.T("Plugin.Actualizar")),
+            EstadoPlugin.JuegoNoEncontrado => (Textos.T("Plugin.SinJuego"), ""),
             _ => ("", "")
         };
     }
@@ -71,7 +72,7 @@ public sealed class PluginViewModel : ObjetoObservable
     private void Instalar()
     {
         if (Estado == EstadoPlugin.OtraVersion &&
-            !dialogos.Confirmar("Se sustituirá el plugin de telemetría del juego (scs-telemetry.dll) por el que trae FleetManager. ¿Continuar?"))
+            !dialogos.Confirmar(Textos.T("Plugin.ConfirmarSustituir")))
         {
             return;
         }
@@ -80,17 +81,15 @@ public sealed class PluginViewModel : ObjetoObservable
         {
             case ResultadoPlugin.Hecho:
                 dialogos.Informar(
-                    "Plugin instalado.\n\n" +
-                    "Si el juego está abierto, ciérralo y vuelve a abrirlo. Al arrancar, ETS2 avisa de que " +
-                    "se usan funciones avanzadas del SDK: pulsa OK para continuar.");
+                    Textos.T("Plugin.Instalado"));
                 break;
 
             case ResultadoPlugin.JuegoAbierto:
-                dialogos.Informar("No se ha podido copiar el plugin porque el juego lo está usando. Cierra ETS2 y vuelve a intentarlo.");
+                dialogos.Informar(Textos.T("Plugin.EnUso"));
                 break;
 
             case ResultadoPlugin.Error:
-                dialogos.Informar("No se ha podido instalar el plugin. Los detalles están en registro.log (botón \"Carpeta de datos\").");
+                dialogos.Informar(Textos.T("Plugin.Error"));
                 break;
 
             case ResultadoPlugin.Cancelado:

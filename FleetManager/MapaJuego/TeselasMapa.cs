@@ -16,7 +16,14 @@ namespace FleetManager.MapaJuego;
 public sealed record InfoMapaJuego(int Version, double MinX, double MinZ, double Lado, int ZoomMinimo, int ZoomMaximo, int TamanoTesela, string Huella);
 
 /// <summary>Nombre de una ciudad y dónde está, para dibujarlo encima del mapa.</summary>
-public sealed record CiudadMapa(string Nombre, double X, double Z);
+/// <param name="Nombre">Nombre en español (o el del juego si no lo tiene).</param>
+/// <param name="Nombres">Nombre en cada idioma de FleetManager ("en" → "Munich"); vacío en mapas antiguos.</param>
+public sealed record CiudadMapa(string Nombre, double X, double Z, Dictionary<string, string>? Nombres = null)
+{
+    /// <summary>El nombre en ese idioma de FleetManager, o el español si no lo hay.</summary>
+    public string NombreEn(string idioma) =>
+        Nombres is not null && Nombres.TryGetValue(idioma, out string? nombre) ? nombre : Nombre;
+}
 
 /// <summary>Rectángulo en coordenadas del juego (X hacia el este, Z hacia el sur).</summary>
 public readonly record struct ZonaMundo(double X, double Z, double Ancho, double Alto)
@@ -34,6 +41,26 @@ public readonly record struct ZonaMundo(double X, double Z, double Ancho, double
 /// </summary>
 public static class TeselasMapa
 {
+    /// <summary>
+    /// Formato de la carpeta del mapa. Si un mapa es de un formato anterior, FleetManager
+    /// ofrece actualizarlo. 2: nombres de ciudad en todos los idiomas.
+    /// </summary>
+    public const int VersionFormato = 2;
+
+    /// <summary>Idioma del juego que corresponde a cada idioma de FleetManager (nombres de ciudad).</summary>
+    public static readonly IReadOnlyDictionary<string, string> IdiomasJuego = new Dictionary<string, string>
+    {
+        ["es"] = "es_es",
+        ["en"] = "en_gb",
+        ["de"] = "de_de",
+        ["fr"] = "fr_fr",
+        ["it"] = "it_it",
+        ["pt"] = "pt_br",
+        ["pl"] = "pl_pl",
+        ["nl"] = "nl_nl",
+        ["tr"] = "tr_tr"
+    };
+
     /// <summary>Unidades del juego que cubre el lado de una tesela en ese zoom.</summary>
     public static double UnidadesPorTesela(InfoMapaJuego info, int zoom) => info.Lado / (1 << zoom);
 

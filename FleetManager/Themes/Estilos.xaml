@@ -93,6 +93,91 @@
         <Setter Property="MinWidth" Value="120" />
     </Style>
 
+    <!-- ================= Desplegable (ComboBox) ================= -->
+
+    <!-- Desplegable en tema oscuro (el de Windows sale blanco). -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+        <Setter Property="Background" Value="{StaticResource Pincel.Boton}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Pincel.Borde}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton x:Name="Abrir"
+                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Focusable="False"
+                                      ClickMode="Press">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Fondo"
+                                            Background="{StaticResource Pincel.Boton}"
+                                            BorderBrush="{StaticResource Pincel.Borde}"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                        <Path Data="M 0,0 L 4,4 L 8,0 Z"
+                                              Fill="{StaticResource Pincel.TextoSecundario}"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,10,0" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Fondo" Property="Background" Value="{StaticResource Pincel.BotonEncima}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          IsHitTestVisible="False"
+                                          Margin="12,6,30,6"
+                                          VerticalAlignment="Center" />
+                        <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                            <Border Background="{StaticResource Pincel.Panel}"
+                                    BorderBrush="{StaticResource Pincel.Borde}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Margin="0,2,0,0"
+                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Fondo" Background="Transparent" Padding="12,6">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Fondo" Property="Background" Value="{StaticResource Pincel.BotonEncima}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Fondo" Property="Background" Value="{StaticResource Pincel.Seleccion}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ================= Menú lateral ================= -->
 
     <Style x:Key="ElementoMenu" TargetType="RadioButton">

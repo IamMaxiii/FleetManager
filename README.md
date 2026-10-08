@@ -4,10 +4,14 @@ Tacógrafo digital y gestor de jornadas para **Euro Truck Simulator 2**. Lee el 
 tiempo real y lleva tus tiempos de conducción y descanso con las reglas de la UE
 (Reglamento CE 561/2006), para que planifiques tus viajes como un camionero de verdad.
 
+🌍 Disponible en **español, English, Deutsch, Français, Italiano, Português, Polski,
+Nederlands y Türkçe** (se elige solo según el idioma de Windows y se cambia en el menú).
+
 ![Inicio: mapa del juego con tu recorrido](docs/capturas/inicio.png)
 
 ## Qué hace
 
+- **Como un tacógrafo de verdad:** metes la tarjeta al empezar y la sacas al terminar.
 - **Tacógrafo automático:** conducción, otros trabajos, disponibilidad y descanso
   según lo que haces en el juego (en marcha, parado con el motor encendido, motor apagado).
 - **Reglas de la UE:** conducción continua (4 h 30), diaria (9 h / 10 h), semanal (56 h)
@@ -25,7 +29,7 @@ tiempo real y lleva tus tiempos de conducción y descanso con las reglas de la U
 
 ## Instalación
 
-1. Descarga `FleetManager-Instalador-1.0.0.exe` de la página de
+1. Descarga `FleetManager-Instalador-<versión>.exe` de la página de
    [versiones (Releases)](../../releases/latest).
 2. Ábrelo. Windows puede mostrar **"Windows protegió tu PC"** porque el instalador no
    está firmado: pulsa **Más información → Ejecutar de todas formas**.
@@ -68,3 +72,16 @@ aficionado, sin relación con SCS Software.
 © 2026 IamMaxiii. **Todos los derechos reservados.** Puedes usar FleetManager gratis; el
 código se publica solo para consulta y no se puede copiar, modificar ni redistribuir sin
 permiso. Detalles en [LICENSE](LICENSE).
+
+## English
+
+FleetManager is a digital tachograph and shift manager for **Euro Truck Simulator 2**.
+It reads the game in real time and tracks your driving and rest times with the EU rules
+(Regulation EC 561/2006): insert the card when you start, remove it when you finish, and
+plan your stops like a real truck driver. It includes the game map with the route of each
+shift, a trip history with CSV export, an always-on-top mini tachograph and a time skip
+for rests. The app is available in 9 languages.
+
+Download the installer from [Releases](../../releases/latest), open it (if Windows shows
+"Windows protected your PC", click **More info → Run anyway**) and, in the game, turn off
+**Rest state simulation** and **Mandatory break simulation** (Options → Gameplay).

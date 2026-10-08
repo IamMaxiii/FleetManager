@@ -5,6 +5,7 @@ using System.Windows.Media;
 using FleetManager.MapaJuego;
 using FleetManager.Models;
 using FleetManager.ViewModels;
+using FleetManager.Idiomas;
 
 namespace FleetManager.Views;
 
@@ -167,7 +168,7 @@ public sealed class LienzoMapa : FrameworkElement
         }
         else if (!hayMapa && recorridoCompleto is null)
         {
-            Texto(dibujo, "Conduce con la jornada abierta para ir dibujando el recorrido.", new Point(tamano.Width / 2, tamano.Height / 2), ColorTexto, centrado: true);
+            Texto(dibujo, Textos.T("Mapa.ConduceConTarjeta"), new Point(tamano.Width / 2, tamano.Height / 2), ColorTexto, centrado: true);
         }
     }
 
@@ -310,10 +311,12 @@ public sealed class LienzoMapa : FrameworkElement
                 continue;
             }
 
-            if (!textosCiudades.TryGetValue(ciudad.Nombre, out FormattedText? texto))
+            string nombre = ciudad.NombreEn(Textos.Actual.Codigo);
+
+            if (!textosCiudades.TryGetValue(nombre, out FormattedText? texto))
             {
-                texto = new FormattedText(ciudad.Nombre, CultureInfo.GetCultureInfo("es-ES"), FlowDirection.LeftToRight, LetraCiudad, 14, ColorCiudad, ppp);
-                textosCiudades[ciudad.Nombre] = texto;
+                texto = new FormattedText(nombre, Textos.Cultura, FlowDirection.LeftToRight, LetraCiudad, 14, ColorCiudad, ppp);
+                textosCiudades[nombre] = texto;
             }
 
             var zona = new Rect(punto.X - texto.Width / 2, punto.Y - texto.Height / 2, texto.Width, texto.Height);
@@ -446,7 +449,7 @@ public sealed class LienzoMapa : FrameworkElement
 
     private void Texto(DrawingContext dibujo, string texto, Point posicion, Brush color, bool centrado)
     {
-        var formato = new FormattedText(texto, CultureInfo.GetCultureInfo("es-ES"), FlowDirection.LeftToRight,
+        var formato = new FormattedText(texto, Textos.Cultura, FlowDirection.LeftToRight,
             new Typeface("Segoe UI"), 12, color, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
         if (centrado)

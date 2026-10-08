@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Input;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.MapaJuego;
 using FleetManager.Models;
 using FleetManager.Storage;
@@ -31,11 +32,14 @@ public sealed class MainViewModel : ObjetoObservable, IDisposable
 {
     private readonly AlmacenDatos almacen;
     private readonly RutasDatos rutas;
+    private readonly IDialogos dialogos;
+    private readonly Action reiniciar;
 
     private Seccion seccion = Seccion.Inicio;
     private bool miniVisible;
     private string textoGuardado = "";
     private bool errorGuardado;
+    private IdiomaApp idiomaElegido;
 
     public MainViewModel(
         ServicioTacografo servicio,
@@ -44,10 +48,14 @@ public sealed class MainViewModel : ObjetoObservable, IDisposable
         IDialogos dialogos,
         IControlJuego controlJuego,
         ServicioMapaJuego servicioMapaJuego,
-        InstaladorPlugin instaladorPlugin)
+        InstaladorPlugin instaladorPlugin,
+        Action reiniciar)
     {
         this.almacen = almacen;
         this.rutas = rutas;
+        this.dialogos = dialogos;
+        this.reiniciar = reiniciar;
+        idiomaElegido = Textos.Actual;
 
         Plugin = new PluginViewModel(instaladorPlugin, dialogos);
         Plugin.Comprobar();
@@ -105,6 +113,33 @@ public sealed class MainViewModel : ObjetoObservable, IDisposable
         }
     }
 
+    public IReadOnlyList<IdiomaApp> Idiomas => Textos.Disponibles;
+
+    /// <summary>
+    /// Idioma de la aplicación. Se guarda al momento y, para aplicarlo, se ofrece
+    /// reiniciar FleetManager (si no, se aplica la próxima vez que se abra).
+    /// </summary>
+    public IdiomaApp IdiomaElegido
+    {
+        get => idiomaElegido;
+        set
+        {
+            if (value is null || !Asignar(ref idiomaElegido, value))
+            {
+                return;
+            }
+
+            almacen.Ajustes.Idioma = value.Codigo;
+            almacen.MarcarCambios(ArchivosDatos.Ajustes);
+
+            if (value != Textos.Actual && dialogos.Confirmar(Textos.T("Idioma.Reiniciar")))
+            {
+                almacen.GuardarCambiosPendientes();
+                reiniciar();
+            }
+        }
+    }
+
     public string TextoGuardado { get => textoGuardado; private set => Asignar(ref textoGuardado, value); }
 
     public bool ErrorGuardado { get => errorGuardado; private set => Asignar(ref errorGuardado, value); }
@@ -148,10 +183,10 @@ public sealed class MainViewModel : ObjetoObservable, IDisposable
     {
         ErrorGuardado = almacen.UltimoError is not null;
         TextoGuardado = almacen.UltimoError is { } error
-            ? $"Error al guardar: {error}"
+            ? Textos.T("Guardado.Error", error)
             : almacen.UltimoGuardado is { } momento
-                ? $"Guardado a las {momento.ToLocalTime():HH:mm}"
-                : "Datos al día";
+                ? Textos.T("Guardado.Hora", momento.ToLocalTime().ToString("HH:mm"))
+                : Textos.T("Guardado.AlDia");
     }
 
     private void AbrirCarpetaDatos()

@@ -8,6 +8,10 @@ using TsMap.TsItem;
 namespace FleetManager.MapaJuego;
 
 /// <summary>Cómo va la generación del mapa.</summary>
+/// <param name="Texto">
+/// Clave del texto y sus valores separados por "|" ("Generador.Dibujando|100|400"):
+/// FleetManager lo traduce al idioma elegido.
+/// </param>
 public sealed record ProgresoMapa(string Texto, double Fraccion);
 
 /// <summary>
@@ -26,7 +30,6 @@ public sealed record ProgresoMapa(string Texto, double Fraccion);
 /// </summary>
 public static class GeneradorMapa
 {
-    public const int VersionFormato = 1;
     public const int ZoomMinimo = 3;
     public const int ZoomMaximo = 9;
     public const int TamanoTesela = 256;
@@ -50,19 +53,19 @@ public static class GeneradorMapa
         }
 
         Directory.CreateDirectory(temporal);
-        progreso.Report(new ProgresoMapa("Leyendo el mapa del juego…", 0));
+        progreso.Report(new ProgresoMapa("Generador.Leyendo", 0));
 
         var mapa = new TsMapper(carpetaJuego, new List<Mod>());
         mapa.Parse();
         cancelar.ThrowIfCancellationRequested();
 
         double lado = Math.Max(mapa.maxX - mapa.minX, mapa.maxZ - mapa.minZ);
-        var info = new InfoMapaJuego(VersionFormato, mapa.minX, mapa.minZ, lado, ZoomMinimo, ZoomMaximo, TamanoTesela, huella);
+        var info = new InfoMapaJuego(TeselasMapa.VersionFormato, mapa.minX, mapa.minZ, lado, ZoomMinimo, ZoomMaximo, TamanoTesela, huella);
 
         File.WriteAllText(Path.Combine(temporal, ArchivoCiudades), JsonSerializer.Serialize(Ciudades(mapa)));
 
         // Qué teselas tienen algo que dibujar, en cada zoom.
-        progreso.Report(new ProgresoMapa("Calculando qué zonas dibujar…", 0));
+        progreso.Report(new ProgresoMapa("Generador.Calculando", 0));
         var (puntos, tramos) = Contenido(mapa);
         var porZoom = new Dictionary<int, HashSet<(int X, int Y)>>();
 
@@ -100,7 +103,7 @@ public static class GeneradorMapa
 
                 if (hechas % 50 == 0 || hechas == total)
                 {
-                    progreso.Report(new ProgresoMapa($"Dibujando el mapa: {hechas:N0} de {total:N0} teselas", (double)hechas / total));
+                    progreso.Report(new ProgresoMapa($"Generador.Dibujando|{hechas}|{total}", (double)hechas / total));
                 }
             }
         }
@@ -129,7 +132,7 @@ public static class GeneradorMapa
         Error = new SolidBrush(Color.Red)
     };
 
-    /// <summary>Nombres de las ciudades (en español si el juego los tiene) y su posición.</summary>
+    /// <summary>Nombres de las ciudades (en cada idioma de FleetManager, si el juego los tiene) y su posición.</summary>
     private static List<CiudadMapa> Ciudades(TsMapper mapa)
     {
         var ciudades = new List<CiudadMapa>();
@@ -147,7 +150,14 @@ public static class GeneradorMapa
                             ?? ciudad.City.Name;
             TsNode? nodo = mapa.GetNodeByUid(ciudad.NodeUid);
 
-            ciudades.Add(new CiudadMapa(nombre, nodo?.X ?? ciudad.X, nodo?.Z ?? ciudad.Z));
+            var nombres = new Dictionary<string, string>();
+
+            foreach (var (idioma, idiomaJuego) in TeselasMapa.IdiomasJuego)
+            {
+                nombres[idioma] = mapa.Localization.GetLocaleValue(ciudad.City.LocalizationToken, idiomaJuego) ?? nombre;
+            }
+
+            ciudades.Add(new CiudadMapa(nombre, nodo?.X ?? ciudad.X, nodo?.Z ?? ciudad.Z, nombres));
         }
 
         return ciudades;

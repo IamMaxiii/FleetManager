@@ -1,4 +1,5 @@
 using FleetManager.Models;
+using FleetManager.Idiomas;
 
 namespace FleetManager.Core;
 
@@ -14,21 +15,21 @@ public static class ValidadorHistorial
 
         if (trayecto.Fin < trayecto.Inicio)
         {
-            errores.Add("La hora de fin no puede ser anterior a la de inicio.");
+            errores.Add(Textos.T("Validacion.FinAntesInicio"));
         }
 
         if (trayecto.Kilometros < 0)
         {
-            errores.Add("Los kilómetros no pueden ser negativos.");
+            errores.Add(Textos.T("Validacion.KmNegativos"));
         }
 
         if (trayecto.VelocidadMedia < 0 || trayecto.VelocidadMaxima < 0)
         {
-            errores.Add("Las velocidades no pueden ser negativas.");
+            errores.Add(Textos.T("Validacion.VelocidadesNegativas"));
         }
         else if (trayecto.VelocidadMedia > trayecto.VelocidadMaxima)
         {
-            errores.Add("La velocidad media no puede ser mayor que la máxima.");
+            errores.Add(Textos.T("Validacion.MediaMayorMaxima"));
         }
 
         return errores;
@@ -41,12 +42,12 @@ public static class ValidadorHistorial
 
         if (jornada.Fin is { } fin && fin < jornada.Inicio)
         {
-            errores.Add("La hora de fin no puede ser anterior a la de inicio.");
+            errores.Add(Textos.T("Validacion.FinAntesInicio"));
         }
 
         if (jornada.Trayectos.Any(t => t.Inicio < jornada.Inicio || (jornada.Fin is { } f && t.Fin > f)))
         {
-            errores.Add("Hay trayectos fuera del horario de la jornada.");
+            errores.Add(Textos.T("Validacion.TrayectosFuera"));
         }
 
         return errores;

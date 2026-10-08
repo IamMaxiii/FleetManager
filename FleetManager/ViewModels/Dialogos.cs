@@ -1,5 +1,6 @@
 using System.Windows;
 using Microsoft.Win32;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -32,10 +33,10 @@ public sealed class DialogosWpf : IDialogos
     {
         var dialogo = new SaveFileDialog
         {
-            Title = "Exportar a CSV",
+            Title = Textos.T("Historial.Exportar"),
             FileName = nombreSugerido,
             DefaultExt = ".csv",
-            Filter = "Archivo CSV (*.csv)|*.csv",
+            Filter = Textos.T("Csv.Filtro"),
             AddExtension = true,
             OverwritePrompt = true
         };

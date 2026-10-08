@@ -40,7 +40,7 @@ public sealed class HistorialViewModelTests : IDisposable
     [Fact]
     public void El_arbol_tiene_todo_el_historial_y_las_jornadas_de_la_mas_reciente_a_la_mas_antigua()
     {
-        Assert.Equal(["Todo el historial", "Jornada 2 (abierta)", "Jornada 1"], historial.Arbol.Select(n => n.Titulo));
+        Assert.Equal(["Todo el historial", "Jornada 2 (en curso)", "Jornada 1"], historial.Arbol.Select(n => n.Titulo));
 
         NodoHistorial jornada1 = NodoJornada(1);
         Assert.Equal(["Día 176 (lun)", "Día 177 (mar)"], jornada1.Hijos.Select(n => n.Titulo));

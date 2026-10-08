@@ -1,5 +1,6 @@
 using FleetManager.Core;
 using FleetManager.Models;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -41,23 +42,23 @@ public static class GeneradorAvisos
         // Límites de conducción agotados.
         if (estado.ConduccionContinuaRestante == TimeSpan.Zero && !descansando)
         {
-            avisos.Add(new(NivelAviso.Urgente, "Pausa obligatoria: has llegado a 4 h 30 de conducción continua."));
+            avisos.Add(new(NivelAviso.Urgente, Textos.T("Aviso.PausaObligatoria")));
         }
 
         if (estado.ConduccionDiariaRestante == TimeSpan.Zero)
         {
-            avisos.Add(new(NivelAviso.Urgente, "Has agotado la conducción diaria."));
+            avisos.Add(new(NivelAviso.Urgente, Textos.T("Aviso.DiariaAgotada")));
         }
 
         if (estado.ConduccionSemanalRestante == TimeSpan.Zero || estado.ConduccionBisemanalRestante == TimeSpan.Zero)
         {
-            avisos.Add(new(NivelAviso.Urgente, "Has agotado la conducción semanal o bisemanal."));
+            avisos.Add(new(NivelAviso.Urgente, Textos.T("Aviso.SemanalAgotada")));
         }
 
         // Parada cercana.
         if (estado.SiguienteParada > TimeSpan.Zero && estado.SiguienteParada <= AntelacionParada && !descansando)
         {
-            avisos.Add(new(NivelAviso.Atencion, $"Parada obligatoria en {(int)Math.Ceiling(estado.SiguienteParada.TotalMinutes)} min."));
+            avisos.Add(new(NivelAviso.Atencion, Textos.T("Aviso.ParadaEn", (int)Math.Ceiling(estado.SiguienteParada.TotalMinutes))));
         }
 
         if (descansando)
@@ -65,11 +66,11 @@ public static class GeneradorAvisos
             // Durante el descanso: qué se ha cumplido ya.
             if (estado.DescansoDiarioRestante == TimeSpan.Zero)
             {
-                avisos.Add(new(NivelAviso.Informacion, "Descanso diario cumplido."));
+                avisos.Add(new(NivelAviso.Informacion, Textos.T("Aviso.DiarioCumplido")));
             }
             else if (estado.PausaRestante == TimeSpan.Zero)
             {
-                avisos.Add(new(NivelAviso.Informacion, "Pausa cumplida: puedes seguir conduciendo."));
+                avisos.Add(new(NivelAviso.Informacion, Textos.T("Aviso.PausaCumplida")));
             }
         }
         else
@@ -77,22 +78,22 @@ public static class GeneradorAvisos
             // Plazos de los descansos.
             if (estado.Ahora > estado.LimiteInicioDescansoDiario)
             {
-                avisos.Add(new(NivelAviso.Urgente, "Descanso diario fuera de plazo."));
+                avisos.Add(new(NivelAviso.Urgente, Textos.T("Aviso.DiarioFueraPlazo")));
             }
             else if (estado.LimiteInicioDescansoDiario - estado.Ahora <= AntelacionDescansoDiario)
             {
-                avisos.Add(new(NivelAviso.Atencion, $"Empieza el descanso diario antes de: {Formato.HoraJuego(estado.LimiteInicioDescansoDiario)}."));
+                avisos.Add(new(NivelAviso.Atencion, Textos.T("Aviso.DiarioAntesDe", Formato.HoraJuego(estado.LimiteInicioDescansoDiario))));
             }
 
             if (!estado.DescansoSemanalEnCurso)
             {
                 if (estado.Ahora > estado.PlazoDescansoSemanal)
                 {
-                    avisos.Add(new(NivelAviso.Urgente, "Descanso semanal fuera de plazo."));
+                    avisos.Add(new(NivelAviso.Urgente, Textos.T("Aviso.SemanalFueraPlazo")));
                 }
                 else if (estado.PlazoDescansoSemanal - estado.Ahora <= AntelacionDescansoSemanal)
                 {
-                    avisos.Add(new(NivelAviso.Atencion, $"Empieza el descanso semanal antes de: {Formato.HoraJuego(estado.PlazoDescansoSemanal)}."));
+                    avisos.Add(new(NivelAviso.Atencion, Textos.T("Aviso.SemanalAntesDe", Formato.HoraJuego(estado.PlazoDescansoSemanal))));
                 }
             }
         }

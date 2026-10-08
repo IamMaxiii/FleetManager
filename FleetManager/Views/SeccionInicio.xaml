@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:FleetManager.ViewModels"
              xmlns:vistas="clr-namespace:FleetManager.Views"
+             xmlns:i="clr-namespace:FleetManager.Idiomas"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 
@@ -87,10 +88,10 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <TextBlock Text="Mapa del juego" FontWeight="SemiBold" Foreground="{StaticResource Pincel.Texto}" />
-                            <TextBlock Text="Prepáralo una vez para ver las carreteras y ciudades del juego debajo de tu recorrido."
+                            <TextBlock Text="{i:Texto Inicio.MapaJuego}" FontWeight="SemiBold" Foreground="{StaticResource Pincel.Texto}" />
+                            <TextBlock Text="{i:Texto Inicio.MapaPreparaTexto}"
                                        TextWrapping="Wrap" Margin="0,4,0,8" Foreground="{StaticResource Pincel.TextoSecundario}" />
-                            <Button Content="Preparar el mapa" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
+                            <Button Content="{i:Texto Inicio.PrepararMapa}" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
                         </StackPanel>
 
                         <!-- El juego ha cambiado -->
@@ -109,16 +110,16 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <TextBlock Text="Tu juego ha cambiado (actualización o DLC) desde que se preparó el mapa."
+                            <TextBlock Text="{i:Texto Inicio.JuegoCambiado}"
                                        TextWrapping="Wrap" Margin="0,0,0,8" Foreground="{StaticResource Pincel.TextoSecundario}" />
-                            <Button Content="Actualizar el mapa" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
+                            <Button Content="{i:Texto Inicio.ActualizarMapa}" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
                         </StackPanel>
 
                         <!-- Preparándose -->
                         <StackPanel Visibility="{Binding Generando, Converter={StaticResource SiNoAVisibilidad}}">
                             <TextBlock Text="{Binding TextoProgreso}" TextWrapping="Wrap" Foreground="{StaticResource Pincel.Texto}" />
                             <ProgressBar Style="{StaticResource Barra}" Value="{Binding Progreso, Mode=OneWay}" Margin="0,8" />
-                            <Button Content="Cancelar" Command="{Binding ComandoCancelar}" HorizontalAlignment="Left" Margin="0" />
+                            <Button Content="{i:Texto Comun.Cancelar}" Command="{Binding ComandoCancelar}" HorizontalAlignment="Left" Margin="0" />
                         </StackPanel>
 
                         <TextBlock Text="{Binding Mensaje}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{StaticResource Pincel.Informacion}" />
@@ -128,11 +129,11 @@
                 <!-- Controles arriba a la derecha. -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12">
                     <Border Background="#E62B2B2B" CornerRadius="4" Padding="10,4">
-                        <CheckBox Content="Seguir camión" IsChecked="{Binding Inicio.SeguirCamion}" Style="{StaticResource Interruptor}" />
+                        <CheckBox Content="{i:Texto Inicio.SeguirCamion}" IsChecked="{Binding Inicio.SeguirCamion}" Style="{StaticResource Interruptor}" />
                     </Border>
-                    <Button Content="+" Style="{StaticResource BotonMapa}" Click="Acercar_Click" ToolTip="Acercar (también con la rueda del ratón)" />
-                    <Button Content="−" Style="{StaticResource BotonMapa}" Click="Alejar_Click" ToolTip="Alejar" />
-                    <Button Content="Ver todo" Style="{StaticResource BotonMapa}" Click="VerTodo_Click" ToolTip="Encuadrar todo lo conducido" />
+                    <Button Content="+" Style="{StaticResource BotonMapa}" Click="Acercar_Click" ToolTip="{i:Texto Inicio.AcercarAyuda}" />
+                    <Button Content="−" Style="{StaticResource BotonMapa}" Click="Alejar_Click" ToolTip="{i:Texto Inicio.AlejarAyuda}" />
+                    <Button Content="{i:Texto Inicio.VerTodo}" Style="{StaticResource BotonMapa}" Click="VerTodo_Click" ToolTip="{i:Texto Inicio.VerTodoAyuda}" />
                 </StackPanel>
 
                 <!-- Coordenadas abajo a la derecha. -->
@@ -158,11 +159,11 @@
                         <Grid Margin="0,8,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding Velocidad}" FontSize="24" FontWeight="Bold" Style="{StaticResource TextoVelocidad}" />
-                                <TextBlock Text="km/h" Foreground="White" Opacity="0.85" Margin="6,0,0,4" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{i:Texto Comun.Kmh}" Foreground="White" Opacity="0.85" Margin="6,0,0,4" VerticalAlignment="Bottom" />
                                 <TextBlock Style="{StaticResource SimboloPeligro}" FontSize="20" Margin="8,0,0,0" VerticalAlignment="Center" />
                             </StackPanel>
                             <StackPanel HorizontalAlignment="Right">
-                                <TextBlock Text="Siguiente parada" Foreground="White" Opacity="0.85" FontSize="11" HorizontalAlignment="Right" />
+                                <TextBlock Text="{i:Texto Tacografo.SiguienteParada}" Foreground="White" Opacity="0.85" FontSize="11" HorizontalAlignment="Right" />
                                 <TextBlock Text="{Binding SiguienteParada}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Right" />
                             </StackPanel>
                         </Grid>
@@ -181,8 +182,8 @@
                     <StackPanel>
                         <TextBlock Text="{Binding TextoJornada}" Style="{StaticResource TituloPanel}" />
                         <WrapPanel>
-                            <Button Content="Abrir jornada" Command="{Binding ComandoAbrirJornada}" />
-                            <Button Content="Cerrar jornada" Command="{Binding ComandoCerrarJornada}" />
+                            <Button Content="{i:Texto Tarjeta.Meter}" Command="{Binding ComandoAbrirJornada}" />
+                            <Button Content="{i:Texto Tarjeta.Sacar}" Command="{Binding ComandoCerrarJornada}" />
                         </WrapPanel>
                     </StackPanel>
                 </Border>
@@ -190,7 +191,7 @@
                 <!-- Trayecto en curso -->
                 <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding Tacografo}">
                     <StackPanel>
-                        <TextBlock Text="Trayecto en curso" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Tacografo.TrayectoEnCurso}" Style="{StaticResource TituloPanel}" />
                         <TextBlock Text="{Binding Trayecto}" Style="{StaticResource Valor}" />
                         <TextBlock Text="{Binding DatosTrayecto}" Style="{StaticResource Valor}" FontSize="11" Foreground="{StaticResource Pincel.TextoSecundario}" />
                     </StackPanel>
@@ -199,7 +200,7 @@
                 <!-- Encargo -->
                 <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding Camion}">
                     <StackPanel>
-                        <TextBlock Text="Encargo" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Inicio.Encargo}" Style="{StaticResource TituloPanel}" />
                         <TextBlock Text="{Binding Ruta}" Style="{StaticResource Valor}" />
                         <StackPanel Visibility="{Binding HayEncargo, Converter={StaticResource SiNoAVisibilidad}}">
                             <TextBlock Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
@@ -208,7 +209,7 @@
                                 <Run Text="{Binding Peso, Mode=OneWay}" />
                             </TextBlock>
                             <TextBlock Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
-                                <Run Text="Entrega antes de" />
+                                <Run Text="{i:Texto Inicio.EntregaAntesDe}" />
                                 <Run Text="{Binding Entrega, Mode=OneWay}" />
                             </TextBlock>
                         </StackPanel>
@@ -218,7 +219,7 @@
                 <!-- Saltar tiempo con la consola del juego -->
                 <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding SaltoTiempo}">
                     <StackPanel>
-                        <TextBlock Text="Saltar tiempo" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Salto.Titulo}" Style="{StaticResource TituloPanel}" />
 
                         <!-- Sin consola: explicación y botón para activarla. -->
                         <StackPanel>
@@ -231,17 +232,17 @@
                                     </Style.Triggers>
                                 </Style>
                             </StackPanel.Style>
-                            <TextBlock Text="Hace falta la consola del juego. Se activa con el juego cerrado."
+                            <TextBlock Text="{i:Texto Salto.FaltaConsola}"
                                        Style="{StaticResource Valor}"
                                        Foreground="{StaticResource Pincel.TextoSecundario}" />
-                            <Button Content="Activar la consola" Command="{Binding ComandoActivarConsola}" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                            <Button Content="{i:Texto Salto.ActivarConsola}" Command="{Binding ComandoActivarConsola}" HorizontalAlignment="Left" Margin="0,6,0,0" />
                         </StackPanel>
 
                         <!-- Con consola: botones de salto. -->
                         <StackPanel Visibility="{Binding ConsolaActivada, Converter={StaticResource SiNoAVisibilidad}}">
                             <WrapPanel>
-                                <Button Content="Saltar 9 h" Command="{Binding ComandoSaltar9}" ToolTip="Descanso diario reducido" />
-                                <Button Content="Saltar 11 h" Command="{Binding ComandoSaltar11}" ToolTip="Descanso diario normal" />
+                                <Button Content="{i:Texto Salto.Saltar9}" Command="{Binding ComandoSaltar9}" ToolTip="{i:Texto Salto.Saltar9Ayuda}" />
+                                <Button Content="{i:Texto Salto.Saltar11}" Command="{Binding ComandoSaltar11}" ToolTip="{i:Texto Salto.Saltar11Ayuda}" />
                             </WrapPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -249,11 +250,11 @@
                                     <ColumnDefinition Width="80" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Hasta las" Style="{StaticResource Etiqueta}" />
+                                <TextBlock Text="{i:Texto Salto.HastaLas}" Style="{StaticResource Etiqueta}" />
                                 <TextBox Grid.Column="1" Text="{Binding HoraDestino, UpdateSourceTrigger=PropertyChanged}" />
-                                <Button Grid.Column="2" Content="Saltar" Command="{Binding ComandoSaltarHasta}" HorizontalAlignment="Left" Margin="8,0,0,0" />
+                                <Button Grid.Column="2" Content="{i:Texto Salto.Saltar}" Command="{Binding ComandoSaltarHasta}" HorizontalAlignment="Left" Margin="8,0,0,0" />
                             </Grid>
-                            <TextBlock Text="Durante el salto, FleetManager teclea en el juego: no toques el teclado."
+                            <TextBlock Text="{i:Texto Salto.NoToques}"
                                        FontSize="11"
                                        TextWrapping="Wrap"
                                        Margin="0,6,0,0"

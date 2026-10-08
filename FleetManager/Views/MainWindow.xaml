@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:FleetManager.ViewModels"
         xmlns:modelos="clr-namespace:FleetManager.Models"
         xmlns:vistas="clr-namespace:FleetManager.Views"
+        xmlns:i="clr-namespace:FleetManager.Idiomas"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="FleetManager"
@@ -81,10 +82,19 @@
 
                     <TextBlock Text="{Binding Tacografo.TextoJornada}" Margin="0,14,0,0" Foreground="{StaticResource Pincel.Texto}" />
 
-                    <CheckBox Content="Mini tacógrafo"
+                    <CheckBox Content="{i:Texto Lateral.MiniTacografo}"
                               IsChecked="{Binding MiniVisible}"
                               Style="{StaticResource Interruptor}"
                               Margin="0,14,0,0" />
+
+                    <!-- Idioma: al cambiarlo, FleetManager se reinicia. -->
+                    <ComboBox ItemsSource="{Binding Idiomas}"
+                              SelectedItem="{Binding IdiomaElegido}"
+                              DisplayMemberPath="Nombre"
+                              ToolTip="{i:Texto Lateral.Idioma}"
+                              HorizontalAlignment="Left"
+                              MinWidth="140"
+                              Margin="0,12,0,0" />
 
                     <TextBlock Text="{Binding TextoGuardado}" Margin="0,16,0,0" FontSize="11" TextWrapping="Wrap">
                         <TextBlock.Style>
@@ -107,22 +117,22 @@
                                TextWrapping="Wrap"
                                Foreground="{StaticResource Pincel.Aviso}" />
 
-                    <Button Content="Carpeta de datos" Command="{Binding ComandoAbrirCarpetaDatos}" Margin="0,12,0,0" HorizontalAlignment="Left" />
+                    <Button Content="{i:Texto Lateral.CarpetaDatos}" Command="{Binding ComandoAbrirCarpetaDatos}" Margin="0,12,0,0" HorizontalAlignment="Left" />
                 </StackPanel>
 
                 <!-- Secciones -->
                 <StackPanel>
-                    <RadioButton Content="Inicio" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Inicio}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Inicio}}" />
-                    <RadioButton Content="Tacógrafo" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Tacografo}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Tacografo}}" />
-                    <RadioButton Content="Camión" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Camion}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Camion}}" />
-                    <RadioButton Content="Conductor" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Conductor}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Conductor}}" />
-                    <RadioButton Content="Historial" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Historial}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Historial}}" />
-                    <RadioButton Content="Ayuda" Style="{StaticResource ElementoMenu}"
+                    <RadioButton Content="{i:Texto Menu.Ayuda}" Style="{StaticResource ElementoMenu}"
                                  IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Ayuda}}" />
                 </StackPanel>
             </DockPanel>

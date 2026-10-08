@@ -66,8 +66,9 @@ public class MapaJuegoTests
     [Fact]
     public void Las_lineas_del_generador_se_entienden()
     {
-        LineaGenerador? progreso = LineaGenerador.Interpretar("PROGRESO|0.2500|Dibujando el mapa: 100 de 400 teselas");
-        Assert.Equal(new ProgresoMapa("Dibujando el mapa: 100 de 400 teselas", 0.25), progreso?.Progreso);
+        // El generador manda la clave del texto y sus números; FleetManager lo traduce.
+        LineaGenerador? progreso = LineaGenerador.Interpretar("PROGRESO|0.2500|Generador.Dibujando|1000|4000");
+        Assert.Equal(new ProgresoMapa("Dibujando el mapa: 1.000 de 4.000 teselas", 0.25), progreso?.Progreso);
 
         Assert.True(LineaGenerador.Interpretar("HECHO")?.EsFin);
         Assert.Equal("No hay juego", LineaGenerador.Interpretar("ERROR|No hay juego")?.Error);

@@ -15,7 +15,7 @@
     <AssemblyName>FleetManager.GeneradorMapa</AssemblyName>
     <!-- ts-map usa una biblioteca nativa de 64 bits. -->
     <PlatformTarget>x64</PlatformTarget>
-    <SatelliteResourceLanguages>es</SatelliteResourceLanguages>
+    <SatelliteResourceLanguages>es;en;de;fr;it;pt;pl;nl;tr</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

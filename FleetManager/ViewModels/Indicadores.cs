@@ -1,3 +1,5 @@
+using FleetManager.Idiomas;
+
 namespace FleetManager.ViewModels;
 
 /// <summary>
@@ -53,7 +55,7 @@ public sealed class IndicadorTiempo : ObjetoObservable
 
         Usado = Formato.Duracion(usadoAhora);
         Limite = Formato.Duracion(limiteAhora);
-        Restante = $"quedan {Formato.Duracion(restanteAhora)}";
+        Restante = Textos.T("Indicador.Quedan", Formato.Duracion(restanteAhora));
         Fraccion = Math.Clamp(parte, 0, 1);
         Nivel = restanteAhora <= TimeSpan.Zero ? NivelIndicador.Agotado
             : parte >= UmbralAtencion ? NivelIndicador.Atencion
@@ -65,7 +67,7 @@ public sealed class IndicadorTiempo : ObjetoObservable
     {
         Usado = Formato.Duracion(hecho);
         Limite = Formato.Duracion(objetivo);
-        Restante = falta > TimeSpan.Zero ? $"faltan {Formato.Duracion(falta)}" : "cumplido";
+        Restante = falta > TimeSpan.Zero ? Textos.T("Indicador.Faltan", Formato.Duracion(falta)) : Textos.T("Indicador.Cumplido");
         Fraccion = objetivo > TimeSpan.Zero ? Math.Clamp(hecho / objetivo, 0, 1) : 0;
         Nivel = NivelIndicador.Objetivo;
     }

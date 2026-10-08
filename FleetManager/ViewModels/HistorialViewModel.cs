@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Input;
 using FleetManager.Core;
+using FleetManager.Idiomas;
 using FleetManager.Models;
 using FleetManager.Storage;
 
@@ -132,7 +133,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
         string claveElegida = NodoSeleccionado?.Clave ?? ClaveTodo;
 
         Arbol.Clear();
-        var todo = new NodoHistorial(TipoNodo.Todo, ClaveTodo, "Todo el historial", TextoResumenCorto(TodasLasFilas()), TodasLasFilas());
+        var todo = new NodoHistorial(TipoNodo.Todo, ClaveTodo, Textos.T("Historial.Todo"), TextoResumenCorto(TodasLasFilas()), TodasLasFilas());
         Arbol.Add(todo);
 
         foreach (Jornada jornada in Historial.Jornadas.OrderByDescending(j => j.Numero))
@@ -158,7 +159,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
         var nodo = new NodoHistorial(
             TipoNodo.Jornada,
             $"j:{jornada.Id}",
-            $"Jornada {jornada.Numero}" + (jornada.Abierta ? " (abierta)" : ""),
+            jornada.Abierta ? Textos.T("Historial.JornadaEnCurso", jornada.Numero) : Textos.T("Tarjeta.Jornada", jornada.Numero),
             $"{FechaJuego.TextoDia(jornada.Inicio)} · {TextoResumenCorto(filas)}",
             filas,
             jornada);
@@ -245,13 +246,13 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
         {
             Recorrido = null;
             ResaltadoDesde = ResaltadoHasta = -1;
-            TextoMapa = "Elige una jornada, un día o un trayecto en el árbol para ver su recorrido.";
+            TextoMapa = Textos.T("Historial.MapaElige");
             return;
         }
 
         Recorrido = almacen.LeerRecorrido(jornada.Id);
         TextoMapa = Recorrido.Tramos.Count == 0
-            ? "Esta jornada no tiene recorrido guardado (las jornadas anteriores al mapa no lo tienen)."
+            ? Textos.T("Historial.MapaSinRecorrido")
             : "";
 
         var mismaJornada = elegidos.Where(e => e.Jornada == jornada).Select(e => e.Trayecto).ToList();
@@ -272,7 +273,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     private void AlGuardarEdicion()
     {
         GuardarAhora();
-        Mensaje = "Cambios guardados.";
+        Mensaje = Textos.T("Historial.CambiosGuardados");
         Refrescar();
     }
 
@@ -285,8 +286,8 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
             : Filas.Select(f => (f.Jornada, f.Trayecto)).ToList();
 
         string nombre = NodoSeleccionado is { Tipo: TipoNodo.Jornada or TipoNodo.Dia, Jornada: { } jornada } && FilasSeleccionadas.Count == 0
-            ? $"FleetManager-jornada-{jornada.Numero}.csv"
-            : "FleetManager-trayectos.csv";
+            ? Textos.T("Csv.NombreJornada", jornada.Numero)
+            : Textos.T("Csv.NombreTrayectos");
 
         Exportar(filas, nombre);
     }
@@ -295,7 +296,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     {
         if (filas.Count == 0)
         {
-            Mensaje = "No hay trayectos que exportar.";
+            Mensaje = Textos.T("Historial.NadaQueExportar");
             return;
         }
 
@@ -307,11 +308,11 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
         try
         {
             ExportadorCsv.Guardar(ruta, ExportadorCsv.Generar(filas.OrderBy(f => f.Item2.Inicio)));
-            Mensaje = $"Exportados {Plural(filas.Count, "trayecto", "trayectos")} a {ruta}";
+            Mensaje = Textos.T("Historial.Exportados", Textos.Plural("Plural.Trayectos", filas.Count), ruta);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Mensaje = $"No se pudo guardar el archivo: {ex.Message}";
+            Mensaje = Textos.T("Historial.NoGuardado", ex.Message);
         }
     }
 
@@ -322,7 +323,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
         var elegidos = FilasSeleccionadas.ToList();
 
         if (elegidos.Count == 0 ||
-            !dialogos.Confirmar($"¿Borrar {Plural(elegidos.Count, "trayecto", "trayectos")}? Antes se guardará una copia de seguridad."))
+            !dialogos.Confirmar(Textos.T("Historial.ConfirmarBorrarTrayectos", Textos.Plural("Plural.Trayectos", elegidos.Count))))
         {
             return;
         }
@@ -339,7 +340,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     private void BorrarJornada()
     {
         if (NodoSeleccionado is not { Tipo: TipoNodo.Jornada, Jornada: { Abierta: false } jornada } ||
-            !dialogos.Confirmar($"¿Borrar la jornada {jornada.Numero} con todos sus trayectos? Antes se guardará una copia de seguridad."))
+            !dialogos.Confirmar(Textos.T("Historial.ConfirmarBorrarJornada", jornada.Numero)))
         {
             return;
         }
@@ -349,9 +350,7 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
 
     private void BorrarTodo()
     {
-        if (!dialogos.Confirmar(
-                "¿Borrar TODO el historial? Se borran todas las jornadas cerradas y los trayectos terminados " +
-                "de la jornada abierta. Antes se guardará una copia de seguridad."))
+        if (!dialogos.Confirmar(Textos.T("Historial.ConfirmarBorrarTodo")))
         {
             return;
         }
@@ -372,13 +371,13 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     {
         if (almacen.CopiarHistorial("antes-de-borrar") is not { } copia)
         {
-            Mensaje = "No se pudo hacer la copia de seguridad, así que no se ha borrado nada.";
+            Mensaje = Textos.T("Historial.SinCopia");
             return;
         }
 
         borrado();
         GuardarAhora();
-        Mensaje = $"Borrado. Copia de seguridad en {copia}";
+        Mensaje = Textos.T("Historial.Borrado", copia);
         Refrescar();
     }
 
@@ -442,9 +441,8 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     {
         ResumenTrayectos resumen = HistorialConsultas.Resumir(filas.Select(f => f.Trayecto));
 
-        return $"{Plural(resumen.Trayectos, "trayecto", "trayectos")} · {Formato.Kilometros(resumen.Kilometros)} · " +
-               $"{Formato.Duracion(resumen.TiempoConduccion)} de conducción" +
-               (resumen.Faltas > 0 ? $" · {Plural(resumen.Faltas, "falta", "faltas")}" : "");
+        return Textos.T("Historial.Resumen", Textos.Plural("Plural.Trayectos", resumen.Trayectos), Formato.Kilometros(resumen.Kilometros), Formato.Duracion(resumen.TiempoConduccion)) +
+               (resumen.Faltas > 0 ? $" · {Textos.Plural("Plural.Faltas", resumen.Faltas)}" : "");
     }
 
     /// <summary>Versión corta para el árbol: trayectos, kilómetros y faltas.</summary>
@@ -452,12 +450,10 @@ public sealed class HistorialViewModel : ObjetoObservable, IDisposable
     {
         ResumenTrayectos resumen = HistorialConsultas.Resumir(filas.Select(f => f.Trayecto));
 
-        return $"{Plural(resumen.Trayectos, "trayecto", "trayectos")} · {Formato.Kilometros(resumen.Kilometros)}" +
-               (resumen.Faltas > 0 ? $" · {Plural(resumen.Faltas, "falta", "faltas")}" : "");
+        return $"{Textos.Plural("Plural.Trayectos", resumen.Trayectos)} · {Formato.Kilometros(resumen.Kilometros)}" +
+               (resumen.Faltas > 0 ? $" · {Textos.Plural("Plural.Faltas", resumen.Faltas)}" : "");
     }
 
     private static string Texto(string valor) => valor.Length > 0 ? valor : "?";
 
-    private static string Plural(int cantidad, string singular, string plural) =>
-        $"{cantidad} {(cantidad == 1 ? singular : plural)}";
 }

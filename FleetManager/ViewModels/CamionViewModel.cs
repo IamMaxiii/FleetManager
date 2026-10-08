@@ -1,5 +1,6 @@
 using FleetManager.Core;
 using FleetManager.Models;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -42,25 +43,25 @@ public sealed class CamionViewModel : ObjetoObservable, IDisposable
 
     public string Posicion { get => posicion; private set => Asignar(ref posicion, value); }
 
-    public IndicadorPorcentaje Combustible { get; } = new("Combustible");
+    public IndicadorPorcentaje Combustible { get; } = new(Textos.T("Camion.Combustible"));
 
-    public IndicadorPorcentaje AdBlue { get; } = new("AdBlue");
+    public IndicadorPorcentaje AdBlue { get; } = new(Textos.T("Camion.AdBlue"));
 
-    public IndicadorPorcentaje DesgasteMotor { get; } = new("Motor");
+    public IndicadorPorcentaje DesgasteMotor { get; } = new(Textos.T("Camion.Motor"));
 
-    public IndicadorPorcentaje DesgasteTransmision { get; } = new("Transmisión");
+    public IndicadorPorcentaje DesgasteTransmision { get; } = new(Textos.T("Camion.Transmision"));
 
-    public IndicadorPorcentaje DesgasteCabina { get; } = new("Cabina");
+    public IndicadorPorcentaje DesgasteCabina { get; } = new(Textos.T("Camion.Cabina"));
 
-    public IndicadorPorcentaje DesgasteChasis { get; } = new("Chasis");
+    public IndicadorPorcentaje DesgasteChasis { get; } = new(Textos.T("Camion.Chasis"));
 
-    public IndicadorPorcentaje DesgasteRuedas { get; } = new("Neumáticos");
+    public IndicadorPorcentaje DesgasteRuedas { get; } = new(Textos.T("Camion.Neumaticos"));
 
     public bool HayRemolque { get => hayRemolque; private set => Asignar(ref hayRemolque, value); }
 
     public string Remolque { get => remolque; private set => Asignar(ref remolque, value); }
 
-    public IndicadorPorcentaje DesgasteRemolque { get; } = new("Desgaste del remolque");
+    public IndicadorPorcentaje DesgasteRemolque { get; } = new(Textos.T("Camion.DesgasteRemolque"));
 
     public bool HayEncargo { get => hayEncargo; private set => Asignar(ref hayEncargo, value); }
 
@@ -71,7 +72,7 @@ public sealed class CamionViewModel : ObjetoObservable, IDisposable
 
     public string Peso { get => peso; private set => Asignar(ref peso, value); }
 
-    public IndicadorPorcentaje DanoCarga { get; } = new("Daño de la carga");
+    public IndicadorPorcentaje DanoCarga { get; } = new(Textos.T("Camion.DanoCarga"));
 
     public string Distancia { get => distancia; private set => Asignar(ref distancia, value); }
 
@@ -105,15 +106,15 @@ public sealed class CamionViewModel : ObjetoObservable, IDisposable
         DesgasteRuedas.ActualizarDesgaste(datos.DesgasteRuedas);
 
         HayRemolque = datos.RemolqueEnganchado;
-        Remolque = datos.RemolqueEnganchado ? datos.Remolque : "Sin remolque enganchado";
+        Remolque = datos.RemolqueEnganchado ? datos.Remolque : Textos.T("Camion.SinRemolque");
         DesgasteRemolque.ActualizarDesgaste(datos.DesgasteRemolque);
 
         HayEncargo = datos.Carga.Length > 0;
-        Ruta = HayEncargo ? $"{datos.Origen} → {datos.Destino}" : "Sin encargo";
+        Ruta = HayEncargo ? $"{datos.Origen} → {datos.Destino}" : Textos.T("Camion.SinEncargo");
         Carga = datos.Carga;
         Peso = HayEncargo ? Formato.Toneladas(datos.PesoCarga) : "";
         DanoCarga.ActualizarDesgaste(datos.DanoCarga);
-        Distancia = HayEncargo ? $"{Formato.Numero(datos.DistanciaPlanificadaKm)} km planificados" : "";
+        Distancia = HayEncargo ? Textos.T("Camion.KmPlanificados", Formato.Numero(datos.DistanciaPlanificadaKm)) : "";
         Entrega = datos.HoraEntrega is { } hora ? Formato.HoraJuego(hora) : "";
     }
 }

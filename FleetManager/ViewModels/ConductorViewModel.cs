@@ -2,6 +2,7 @@ using System.Windows.Input;
 using FleetManager.Core;
 using FleetManager.Models;
 using FleetManager.Storage;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -99,7 +100,7 @@ public sealed class ConductorViewModel : ObjetoObservable, IDisposable
     {
         if (!LecturaCampos.Decimal(KilometrosEditados, out double kilometros) || kilometros < 0)
         {
-            ErrorKilometros = "Escribe un número de kilómetros igual o mayor que 0 (por ejemplo, 125.000 o 125000,5).";
+            ErrorKilometros = Textos.T("Conductor.KmMal");
             return false;
         }
 
@@ -135,7 +136,7 @@ public sealed class ConductorViewModel : ObjetoObservable, IDisposable
 
     private void PonerKilometrosACero()
     {
-        if (!dialogos.Confirmar("¿Poner a cero los kilómetros de la tarjeta?"))
+        if (!dialogos.Confirmar(Textos.T("Conductor.ConfirmarCero")))
         {
             return;
         }

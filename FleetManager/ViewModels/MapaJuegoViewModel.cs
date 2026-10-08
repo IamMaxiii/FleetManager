@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using FleetManager.MapaJuego;
+using FleetManager.Idiomas;
 
 namespace FleetManager.ViewModels;
 
@@ -70,8 +71,7 @@ public sealed class MapaJuegoViewModel : ObjetoObservable
         }
 
         if (!dialogos.Confirmar(
-                "FleetManager va a leer los archivos de tu juego y dibujar el mapa. Tarda unos minutos y " +
-                "ocupa unos 150 MB. Puedes seguir usando la aplicación mientras tanto. ¿Empezar?"))
+                Textos.T("Mapa.Confirmar")))
         {
             return;
         }
@@ -79,7 +79,7 @@ public sealed class MapaJuegoViewModel : ObjetoObservable
         Generando = true;
         Progreso = 0;
         Mensaje = "";
-        TextoProgreso = "Empezando…";
+        TextoProgreso = Textos.T("Mapa.Empezando");
         cancelacion = new CancellationTokenSource();
         CommandManager.InvalidateRequerySuggested();
 
@@ -92,7 +92,7 @@ public sealed class MapaJuegoViewModel : ObjetoObservable
             });
 
             string? error = await servicio.Generar(avance, cancelacion.Token);
-            Mensaje = error is null ? "Mapa del juego preparado." : $"No se ha podido preparar el mapa: {error}";
+            Mensaje = error is null ? Textos.T("Mapa.Preparado") : Textos.T("Mapa.Error", error);
         }
         finally
         {

@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:FleetManager.ViewModels"
+             xmlns:i="clr-namespace:FleetManager.Idiomas"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:ConductorViewModel}">
 
@@ -14,7 +15,7 @@
     </UserControl.Resources>
 
     <StackPanel>
-        <TextBlock Text="Conductor" Style="{StaticResource TituloSeccion}" />
+        <TextBlock Text="{i:Texto Menu.Conductor}" Style="{StaticResource TituloSeccion}" />
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -26,15 +27,15 @@
             <!-- ===== Datos personales ===== -->
             <Border Style="{StaticResource Panel}">
                 <StackPanel>
-                    <TextBlock Text="Datos personales" Style="{StaticResource TituloPanel}" />
+                    <TextBlock Text="{i:Texto Conductor.DatosPersonales}" Style="{StaticResource TituloPanel}" />
 
-                    <TextBlock Text="Nombre" Style="{StaticResource Etiqueta}" />
+                    <TextBlock Text="{i:Texto Conductor.Nombre}" Style="{StaticResource Etiqueta}" />
                     <TextBox Text="{Binding Nombre}" />
 
-                    <TextBlock Text="Apellidos" Style="{StaticResource Etiqueta}" Margin="0,10,0,0" />
+                    <TextBlock Text="{i:Texto Conductor.Apellidos}" Style="{StaticResource Etiqueta}" Margin="0,10,0,0" />
                     <TextBox Text="{Binding Apellidos}" />
 
-                    <TextBlock Text="Fecha de nacimiento" Style="{StaticResource Etiqueta}" Margin="0,10,0,0" />
+                    <TextBlock Text="{i:Texto Conductor.FechaNacimiento}" Style="{StaticResource Etiqueta}" Margin="0,10,0,0" />
                     <TextBox Text="{Binding FechaNacimiento}" />
                 </StackPanel>
             </Border>
@@ -52,10 +53,10 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.ColumnSpan="2" Text="Documentos" Style="{StaticResource TituloPanel}" />
-                        <TextBlock Grid.Row="1" Text="Permiso de conducir" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.ColumnSpan="2" Text="{i:Texto Conductor.Documentos}" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Grid.Row="1" Text="{i:Texto Conductor.Permiso}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding NumeroPermiso}" Style="{StaticResource Valor}" FontFamily="Consolas" />
-                        <TextBlock Grid.Row="2" Text="Certificado ADR" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="2" Text="{i:Texto Conductor.Adr}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding NumeroAdr}" Style="{StaticResource Valor}" FontFamily="Consolas" />
                     </Grid>
                 </Border>
@@ -63,8 +64,8 @@
                 <!-- ===== Tarjeta del conductor ===== -->
                 <Border Style="{StaticResource Panel}" Margin="0,16,0,0">
                     <StackPanel>
-                        <TextBlock Text="Tarjeta del conductor" Style="{StaticResource TituloPanel}" />
-                        <TextBlock Text="Kilómetros recorridos con jornada abierta" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Text="{i:Texto Conductor.Tarjeta}" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Conductor.KmRecorridos}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Text="{Binding KilometrosTarjeta}" FontSize="26" FontWeight="SemiBold" Foreground="{StaticResource Pincel.Texto}" Margin="0,0,0,12" />
 
                         <!-- Botones normales (cuando no se está cambiando el número). -->
@@ -78,18 +79,18 @@
                                     </Style.Triggers>
                                 </Style>
                             </WrapPanel.Style>
-                            <Button Content="Cambiar" Command="{Binding ComandoCambiarKilometros}" />
-                            <Button Content="Poner a cero" Command="{Binding ComandoPonerKilometrosACero}" />
+                            <Button Content="{i:Texto Conductor.Cambiar}" Command="{Binding ComandoCambiarKilometros}" />
+                            <Button Content="{i:Texto Conductor.PonerACero}" Command="{Binding ComandoPonerKilometrosACero}" />
                         </WrapPanel>
 
                         <!-- Cambiar el número a mano. -->
                         <StackPanel Visibility="{Binding EditandoKilometros, Converter={StaticResource SiNoAVisibilidad}}">
-                            <TextBlock Text="Kilómetros de la tarjeta" Style="{StaticResource Etiqueta}" />
+                            <TextBlock Text="{i:Texto Conductor.KmTarjeta}" Style="{StaticResource Etiqueta}" />
                             <TextBox Text="{Binding KilometrosEditados, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Text="{Binding ErrorKilometros}" Foreground="{StaticResource Pincel.Urgente}" TextWrapping="Wrap" />
                             <WrapPanel Margin="0,8,0,0">
-                                <Button Content="Guardar" Command="{Binding ComandoGuardarKilometros}" />
-                                <Button Content="Cancelar" Command="{Binding ComandoCancelarKilometros}" />
+                                <Button Content="{i:Texto Comun.Guardar}" Command="{Binding ComandoGuardarKilometros}" />
+                                <Button Content="{i:Texto Comun.Cancelar}" Command="{Binding ComandoCancelarKilometros}" />
                             </WrapPanel>
                         </StackPanel>
                     </StackPanel>

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using FleetManager.Idiomas;
 using FleetManager.Storage;
 
 namespace FleetManager.MapaJuego;
@@ -13,7 +14,10 @@ public sealed record ProgresoMapa(string Texto, double Fraccion);
 /// <summary>Una línea que escribe el generador del mapa.</summary>
 public sealed record LineaGenerador(bool EsProgreso, bool EsFin, string? Error, ProgresoMapa? Progreso)
 {
-    /// <summary>Entiende "PROGRESO|0.5|texto", "HECHO" y "ERROR|mensaje"; cualquier otra cosa se ignora (vacío).</summary>
+    /// <summary>
+    /// Entiende "PROGRESO|0.5|clave|valores...", "HECHO" y "ERROR|mensaje"; cualquier otra
+    /// cosa se ignora (vacío). El texto del progreso se traduce al idioma de FleetManager.
+    /// </summary>
     public static LineaGenerador? Interpretar(string linea)
     {
         string[] partes = linea.Split('|', 3);
@@ -22,11 +26,22 @@ public sealed record LineaGenerador(bool EsProgreso, bool EsFin, string? Error, 
         {
             "PROGRESO" when partes.Length == 3 &&
                             double.TryParse(partes[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double fraccion)
-                => new LineaGenerador(true, false, null, new ProgresoMapa(partes[2], Math.Clamp(fraccion, 0, 1))),
+                => new LineaGenerador(true, false, null, new ProgresoMapa(Traducir(partes[2]), Math.Clamp(fraccion, 0, 1))),
             "HECHO" => new LineaGenerador(false, true, null, null),
-            "ERROR" => new LineaGenerador(false, false, partes.Length > 1 ? partes[1] : "Error desconocido", null),
+            "ERROR" => new LineaGenerador(false, false, partes.Length > 1 ? partes[1] : Textos.T("Mapa.ErrorDesconocido"), null),
             _ => null
         };
+    }
+
+    /// <summary>"Generador.Dibujando|100|400" → el texto de esa clave con los números.</summary>
+    private static string Traducir(string claveYValores)
+    {
+        string[] partes = claveYValores.Split('|');
+        object[] valores = partes.Skip(1)
+            .Select(v => long.TryParse(v, NumberStyles.Integer, CultureInfo.InvariantCulture, out long numero) ? (object)numero : v)
+            .ToArray();
+
+        return Textos.T(partes[0], valores);
     }
 }
 
@@ -65,7 +80,7 @@ public sealed class ServicioMapaJuego
     public bool Disponible => Info is not null;
 
     /// <summary>Hay mapa, pero se hizo con otra versión del juego o con otros DLC.</summary>
-    public bool NecesitaActualizar => Info is not null && HuellaActual is not null && Info.Huella != HuellaActual;
+    public bool NecesitaActualizar => Info is not null && HuellaActual is not null && (Info.Huella != HuellaActual || Info.Version < TeselasMapa.VersionFormato);
 
     /// <summary>Busca el juego y carga el mapa generado más adecuado (el de la versión actual, o el último que haya).</summary>
     public void Cargar()
@@ -129,14 +144,14 @@ public sealed class ServicioMapaJuego
     {
         if (CarpetaJuego is null || HuellaActual is null)
         {
-            return "No se encuentra Euro Truck Simulator 2 en Steam.";
+            return Textos.T("Mapa.SinJuego");
         }
 
         string programa = Path.Combine(AppContext.BaseDirectory, ProgramaGenerador);
 
         if (!File.Exists(programa))
         {
-            return $"No se encuentra {ProgramaGenerador} junto a FleetManager.";
+            return Textos.T("Mapa.SinGenerador", ProgramaGenerador);
         }
 
         string destino = Path.Combine(carpetaBase, HuellaActual);
@@ -182,12 +197,12 @@ public sealed class ServicioMapaJuego
         {
             proceso.Kill(entireProcessTree: true);
             registro.Info("Generación del mapa cancelada.");
-            return "Cancelado.";
+            return Textos.T("Mapa.Cancelado");
         }
 
         if (!hecho || proceso.ExitCode != 0)
         {
-            error ??= $"El generador terminó con el código {proceso.ExitCode}.";
+            error ??= Textos.T("Mapa.CodigoSalida", proceso.ExitCode);
             registro.Error($"No se pudo generar el mapa: {error}");
             return error;
         }

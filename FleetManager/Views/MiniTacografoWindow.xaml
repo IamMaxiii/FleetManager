@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:FleetManager.ViewModels"
         xmlns:vistas="clr-namespace:FleetManager.Views"
+        xmlns:i="clr-namespace:FleetManager.Idiomas"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
-        Title="Mini tacógrafo"
+        Title="{i:Texto Lateral.MiniTacografo}"
         Width="270"
         SizeToContent="Height"
         WindowStyle="None"
@@ -35,12 +36,12 @@
 
         <Border.ContextMenu>
             <ContextMenu>
-                <MenuItem Header="Descanso" Command="{Binding ComandoDescanso}" />
-                <MenuItem Header="Disponibilidad" Command="{Binding ComandoDisponibilidad}" />
-                <MenuItem Header="Otros trabajos" Command="{Binding ComandoOtrosTrabajos}" />
-                <MenuItem Header="Conducción" Command="{Binding ComandoConduccion}" />
+                <MenuItem Header="{i:Texto Actividad.Descanso}" Command="{Binding ComandoDescanso}" />
+                <MenuItem Header="{i:Texto Actividad.Disponibilidad}" Command="{Binding ComandoDisponibilidad}" />
+                <MenuItem Header="{i:Texto Actividad.OtrosTrabajos}" Command="{Binding ComandoOtrosTrabajos}" />
+                <MenuItem Header="{i:Texto Actividad.Conduccion}" Command="{Binding ComandoConduccion}" />
                 <Separator />
-                <MenuItem Header="Ocultar mini tacógrafo" Click="Ocultar_Click" />
+                <MenuItem Header="{i:Texto Mini.Ocultar}" Click="Ocultar_Click" />
             </ContextMenu>
         </Border.ContextMenu>
 
@@ -49,7 +50,7 @@
             <Grid>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{Binding Velocidad}" FontSize="30" FontWeight="Bold" Style="{StaticResource TextoVelocidad}" />
-                    <TextBlock Text="km/h" Margin="6,0,0,5" VerticalAlignment="Bottom" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    <TextBlock Text="{i:Texto Comun.Kmh}" Margin="6,0,0,5" VerticalAlignment="Bottom" Foreground="{StaticResource Pincel.TextoSecundario}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <TextBlock Text="{Binding LimiteVelocidad}" Foreground="{StaticResource Pincel.TextoSecundario}" VerticalAlignment="Center" />
@@ -68,11 +69,11 @@
             <!-- Siguiente parada y pausa -->
             <Grid Margin="0,8,0,0">
                 <TextBlock Foreground="{StaticResource Pincel.Texto}">
-                    <Run Text="Parada en" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    <Run Text="{i:Texto Mini.ParadaEn}" Foreground="{StaticResource Pincel.TextoSecundario}" />
                     <Run Text="{Binding SiguienteParada, Mode=OneWay}" FontWeight="SemiBold" />
                 </TextBlock>
                 <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource Pincel.Texto}">
-                    <Run Text="Pausa" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    <Run Text="{i:Texto Mini.Pausa}" Foreground="{StaticResource Pincel.TextoSecundario}" />
                     <Run Text="{Binding MarcaPausa15, Mode=OneWay, Converter={StaticResource MarcaHecha}}" FontWeight="Bold" />
                     <Run Text="{Binding MarcaPausa30, Mode=OneWay, Converter={StaticResource MarcaHecha}}" FontWeight="Bold" />
                 </TextBlock>
@@ -80,7 +81,7 @@
 
             <!-- Faltas -->
             <TextBlock Margin="0,4,0,0" Foreground="{StaticResource Pincel.TextoSecundario}">
-                <Run Text="Faltas:" />
+                <Run Text="{i:Texto Mini.Faltas}" />
                 <Run Text="{Binding FaltasJornada, Mode=OneWay}" Foreground="{StaticResource Pincel.Texto}" />
             </TextBlock>
 

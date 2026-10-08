@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using FleetManager.Idiomas;
 
 namespace FleetManager.Storage;
 
@@ -91,7 +92,7 @@ public sealed class ArchivoJson<T> where T : class, new()
         var candidatos = new[]
         {
             (Archivo: Ruta, Origen: OrigenDatos.ArchivoPrincipal, Descripcion: NombreArchivo),
-            (Archivo: rutaCopiaAnterior, Origen: OrigenDatos.CopiaAnterior, Descripcion: "la copia del guardado anterior")
+            (Archivo: rutaCopiaAnterior, Origen: OrigenDatos.CopiaAnterior, Descripcion: Textos.T("Datos.CopiaAnterior"))
         };
 
         foreach (var candidato in candidatos)
@@ -115,14 +116,14 @@ public sealed class ArchivoJson<T> where T : class, new()
             if (resultado != ResultadoIntento.Danado)
             {
                 // Versión más nueva o archivo inaccesible: no está dañado, así que no se toca.
-                return Bloquear($"No se pudo usar {Path.GetFileName(candidato.Archivo)}: {error}.");
+                return Bloquear(Textos.T("Datos.NoSePudoUsar", Path.GetFileName(candidato.Archivo), error));
             }
 
-            problemas.Add($"{Path.GetFileName(candidato.Archivo)} estaba dañado ({error})");
+            problemas.Add(Textos.T("Datos.EstabaDanado", Path.GetFileName(candidato.Archivo), error));
 
             if (!Apartar(candidato.Archivo))
             {
-                return Bloquear($"{Path.GetFileName(candidato.Archivo)} está dañado y no se pudo apartar.");
+                return Bloquear(Textos.T("Datos.NoSePudoApartar", Path.GetFileName(candidato.Archivo)));
             }
         }
 
@@ -136,10 +137,10 @@ public sealed class ArchivoJson<T> where T : class, new()
                 return new ResultadoLectura<T>(
                     datos!,
                     OrigenDatos.CopiaDiaria,
-                    MensajeRecuperacion(problemas, $"la copia diaria {Path.GetFileName(copia)}"));
+                    MensajeRecuperacion(problemas, Textos.T("Datos.CopiaDiaria", Path.GetFileName(copia))));
             }
 
-            problemas.Add($"la copia diaria {Path.GetFileName(copia)} tampoco se pudo leer ({error})");
+            problemas.Add(Textos.T("Datos.CopiaDiariaMal", Path.GetFileName(copia), error));
         }
 
         if (problemas.Count == 0)
@@ -151,9 +152,7 @@ public sealed class ArchivoJson<T> where T : class, new()
         return new ResultadoLectura<T>(
             new T(),
             OrigenDatos.Nuevo,
-            $"No se pudieron recuperar los datos de {NombreArchivo}: {string.Join("; ", problemas)}. " +
-            "Se empieza con datos vacíos. Los archivos dañados se han conservado en la carpeta de datos " +
-            "con \"danado\" en el nombre.");
+            Textos.T("Datos.SinRecuperar", NombreArchivo, string.Join("; ", problemas)));
     }
 
     public void Guardar(T datos)
@@ -245,27 +244,27 @@ public sealed class ArchivoJson<T> where T : class, new()
         }
         catch (JsonException ex)
         {
-            error = "su contenido no es válido";
+            error = Textos.T("Datos.NoValido");
             registro.Error($"No se pudo interpretar {archivo}", ex);
             return ResultadoIntento.Danado;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            error = $"no se pudo abrir ({ex.Message})";
+            error = Textos.T("Datos.NoSeAbre", ex.Message);
             registro.Error($"No se pudo abrir {archivo}", ex);
             return ResultadoIntento.Inaccesible;
         }
 
         if (documento?.Datos is null)
         {
-            error = "está vacío o incompleto";
+            error = Textos.T("Datos.Vacio");
             registro.Error($"{archivo} está vacío o incompleto");
             return ResultadoIntento.Danado;
         }
 
         if (documento.Version > VersionActual)
         {
-            error = $"lo creó una versión más nueva de FleetManager (formato {documento.Version})";
+            error = Textos.T("Datos.VersionNueva", documento.Version);
             registro.Error($"{archivo} tiene un formato más nuevo ({documento.Version}) que el que entiende esta versión ({VersionActual})");
             return ResultadoIntento.VersionMasNueva;
         }
@@ -278,8 +277,7 @@ public sealed class ArchivoJson<T> where T : class, new()
     {
         GuardadoBloqueado = true;
 
-        string aviso = $"{motivo} Para no estropearlo, FleetManager no guardará cambios en {NombreArchivo} " +
-                       "hasta que se resuelva y se vuelva a abrir la aplicación.";
+        string aviso = Textos.T("Datos.Bloqueado", motivo, NombreArchivo);
 
         registro.Error(aviso);
         return new ResultadoLectura<T>(new T(), OrigenDatos.Nuevo, aviso);
@@ -289,12 +287,10 @@ public sealed class ArchivoJson<T> where T : class, new()
     {
         if (problemas.Count == 0)
         {
-            return $"No se encontró {NombreArchivo}. Se han recuperado los datos desde {fuente}.";
+            return Textos.T("Datos.Recuperado", NombreArchivo, fuente);
         }
 
-        return $"{string.Join("; ", problemas)}. Se han recuperado los datos desde {fuente}; " +
-               "los cambios posteriores a esa copia se han perdido. Los archivos dañados se han " +
-               "conservado en la carpeta de datos con \"danado\" en el nombre.";
+        return Textos.T("Datos.RecuperadoConPerdida", string.Join("; ", problemas), fuente);
     }
 
     /// <summary>Renombra un archivo dañado para conservarlo sin que estorbe. Nunca lo borra.</summary>

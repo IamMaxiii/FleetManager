@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:FleetManager.ViewModels"
              xmlns:vistas="clr-namespace:FleetManager.Views"
+             xmlns:i="clr-namespace:FleetManager.Idiomas"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:TacografoViewModel}">
 
@@ -48,7 +49,7 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Velocidad}" FontSize="28" FontWeight="Bold" Style="{StaticResource TextoVelocidad}" />
                         <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="km/h" Foreground="White" Opacity="0.85" />
+                            <TextBlock Text="{i:Texto Comun.Kmh}" Foreground="White" Opacity="0.85" />
                             <TextBlock Text="{Binding LimiteVelocidad}" Foreground="White" Opacity="0.85" FontSize="11" />
                         </StackPanel>
                         <TextBlock Style="{StaticResource SimboloPeligro}" FontSize="26" Margin="8,0,0,0" VerticalAlignment="Center" />
@@ -57,7 +58,7 @@
 
                 <!-- Siguiente parada -->
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <TextBlock Text="Siguiente parada" Foreground="White" Opacity="0.85" HorizontalAlignment="Right" />
+                    <TextBlock Text="{i:Texto Tacografo.SiguienteParada}" Foreground="White" Opacity="0.85" HorizontalAlignment="Right" />
                     <TextBlock Text="{Binding SiguienteParada}" FontSize="32" FontWeight="Bold" Foreground="White" HorizontalAlignment="Right" />
                 </StackPanel>
             </Grid>
@@ -87,7 +88,7 @@
             <!-- ===== Tiempos ===== -->
             <Border Style="{StaticResource Panel}">
                 <StackPanel>
-                    <TextBlock Text="Tiempos" Style="{StaticResource TituloPanel}" />
+                    <TextBlock Text="{i:Texto Tacografo.Tiempos}" Style="{StaticResource TituloPanel}" />
                     <ContentControl Content="{Binding Continua}" />
                     <ContentControl Content="{Binding Diaria}" />
                     <ContentControl Content="{Binding Semanal}" />
@@ -100,18 +101,18 @@
                 <!-- ===== Jornada y actividad ===== -->
                 <Border Style="{StaticResource Panel}">
                     <StackPanel>
-                        <TextBlock Text="Jornada" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{i:Texto Tacografo.Jornada}" Style="{StaticResource TituloPanel}" />
                         <WrapPanel>
-                            <Button Content="Abrir jornada" Command="{Binding ComandoAbrirJornada}" />
-                            <Button Content="Cerrar jornada" Command="{Binding ComandoCerrarJornada}" />
+                            <Button Content="{i:Texto Tarjeta.Meter}" Command="{Binding ComandoAbrirJornada}" />
+                            <Button Content="{i:Texto Tarjeta.Sacar}" Command="{Binding ComandoCerrarJornada}" />
                         </WrapPanel>
                         <WrapPanel Margin="0,4,0,0">
-                            <Button Content="Descanso" Command="{Binding ComandoDescanso}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Descanso}" />
-                            <Button Content="Disponibilidad" Command="{Binding ComandoDisponibilidad}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Disponibilidad}" />
-                            <Button Content="Otros trabajos" Command="{Binding ComandoOtrosTrabajos}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.OtrosTrabajos}" />
-                            <Button Content="Conducción" Command="{Binding ComandoConduccion}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Conduccion}" />
+                            <Button Content="{i:Texto Actividad.Descanso}" Command="{Binding ComandoDescanso}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Descanso}" />
+                            <Button Content="{i:Texto Actividad.Disponibilidad}" Command="{Binding ComandoDisponibilidad}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Disponibilidad}" />
+                            <Button Content="{i:Texto Actividad.OtrosTrabajos}" Command="{Binding ComandoOtrosTrabajos}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.OtrosTrabajos}" />
+                            <Button Content="{i:Texto Actividad.Conduccion}" Command="{Binding ComandoConduccion}" Style="{StaticResource BotonActividad}" Tag="{StaticResource Pincel.Conduccion}" />
                         </WrapPanel>
-                        <TextBlock Text="Los botones de actividad solo cuentan con el camión parado."
+                        <TextBlock Text="{i:Texto Tacografo.BotonesParado}"
                                    FontSize="11"
                                    Foreground="{StaticResource Pincel.TextoSecundario}" />
                     </StackPanel>
@@ -134,9 +135,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.ColumnSpan="2" Text="Pausa y plazos" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Grid.ColumnSpan="2" Text="{i:Texto Tacografo.PausaYPlazos}" Style="{StaticResource TituloPanel}" />
 
-                        <TextBlock Grid.Row="1" Text="Pausa" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="1" Text="{i:Texto Mini.Pausa}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource Valor}">
                             <Run Text="{Binding MarcaPausa15, Mode=OneWay, Converter={StaticResource MarcaHecha}}" FontWeight="Bold" />
                             <Run Text="15  " />
@@ -145,19 +146,19 @@
                             <Run Text="{Binding TextoPausa, Mode=OneWay}" Foreground="{StaticResource Pincel.TextoSecundario}" />
                         </TextBlock>
 
-                        <TextBlock Grid.Row="2" Text="Descanso diario antes de" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="2" Text="{i:Texto Tacografo.DiarioAntesDe}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding PlazoDescansoDiario}" Style="{StaticResource Valor}" />
 
-                        <TextBlock Grid.Row="3" Text="Descanso semanal antes de" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="3" Text="{i:Texto Tacografo.SemanalAntesDe}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding PlazoDescansoSemanal}" Style="{StaticResource Valor}" />
 
-                        <TextBlock Grid.Row="4" Text="Amplitud de jornada" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="4" Text="{i:Texto Tacografo.Amplitud}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Amplitud}" Style="{StaticResource Valor}" />
 
-                        <TextBlock Grid.Row="5" Text="Ampliaciones a 10 h" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="5" Text="{i:Texto Tacografo.Ampliaciones}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Ampliaciones}" Style="{StaticResource Valor}" />
 
-                        <TextBlock Grid.Row="6" Text="Descansos reducidos" Style="{StaticResource Etiqueta}" />
+                        <TextBlock Grid.Row="6" Text="{i:Texto Tacografo.Reducidos}" Style="{StaticResource Etiqueta}" />
                         <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding Reducidos}" Style="{StaticResource Valor}" />
                     </Grid>
                 </Border>
@@ -174,11 +175,11 @@
             <!-- ===== Trayecto en curso ===== -->
             <Border Style="{StaticResource Panel}">
                 <StackPanel>
-                    <TextBlock Text="Trayecto en curso" Style="{StaticResource TituloPanel}" />
+                    <TextBlock Text="{i:Texto Tacografo.TrayectoEnCurso}" Style="{StaticResource TituloPanel}" />
                     <TextBlock Text="{Binding Trayecto}" Style="{StaticResource Valor}" FontSize="15" />
                     <TextBlock Text="{Binding DatosTrayecto}" Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}" />
                     <TextBlock Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
-                        <Run Text="Faltas en la jornada: " />
+                        <Run Text="{i:Texto Tacografo.FaltasJornada}" />
                         <Run Text="{Binding FaltasJornada, Mode=OneWay}" />
                     </TextBlock>
                 </StackPanel>
@@ -187,8 +188,8 @@
             <!-- ===== Infracciones ===== -->
             <Border Grid.Column="2" Style="{StaticResource Panel}">
                 <StackPanel>
-                    <TextBlock Text="Infracciones del tacógrafo" Style="{StaticResource TituloPanel}" />
-                    <TextBlock Text="Ninguna" Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
+                    <TextBlock Text="{i:Texto Tacografo.Infracciones}" Style="{StaticResource TituloPanel}" />
+                    <TextBlock Text="{i:Texto Tacografo.Ninguna}" Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
                         <TextBlock.Visibility>
                             <Binding Path="Infracciones.Count" Converter="{StaticResource CeroAVisible}" />
                         </TextBlock.Visibility>

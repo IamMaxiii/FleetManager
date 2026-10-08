@@ -1,4 +1,5 @@
 using FleetManager.Models;
+using FleetManager.Idiomas;
 
 namespace FleetManager.Core;
 
@@ -118,7 +119,7 @@ public static class AnalizadorTacografo
                 Anotar(
                     TipoInfraccion.DescansoDiarioFueraDePlazo,
                     LimiteInicioDescansoDiario,
-                    "No se empezó el descanso diario a tiempo para hacerlo dentro de las 24 h.");
+                    Textos.T("Infraccion.DiarioFueraPlazo"));
             }
 
             if (!marcadoPlazoSemanal && periodo.Fin > PlazoSemanal)
@@ -127,7 +128,7 @@ public static class AnalizadorTacografo
                 Anotar(
                     TipoInfraccion.DescansoSemanalFueraDePlazo,
                     PlazoSemanal,
-                    "No se empezó el descanso semanal dentro de los 6 periodos de 24 h.");
+                    Textos.T("Infraccion.SemanalFueraPlazo"));
             }
 
             if (periodo.Actividad == Actividad.Conduccion)
@@ -174,7 +175,7 @@ public static class AnalizadorTacografo
                     Anotar(
                         TipoInfraccion.DescansosSemanalesReducidosSeguidos,
                         inicio,
-                        "Dos descansos semanales reducidos seguidos: en dos semanas debe haber al menos uno de 45 h.");
+                        Textos.T("Infraccion.SemanalesReducidos"));
                 }
 
                 haySemanalAnterior = true;
@@ -208,7 +209,7 @@ public static class AnalizadorTacografo
                         Anotar(
                             TipoInfraccion.DemasiadosDescansosReducidos,
                             inicio,
-                            "Más de 3 descansos diarios reducidos entre dos descansos semanales.");
+                            Textos.T("Infraccion.DemasiadosReducidos"));
                     }
                 }
 
@@ -326,7 +327,7 @@ public static class AnalizadorTacografo
                 Anotar(
                     TipoInfraccion.ConduccionContinua,
                     inicio + hastaContinua,
-                    "Más de 4 h 30 min de conducción sin la pausa de 45 min (o 15 + 30 min).");
+                    Textos.T("Infraccion.Continua"));
             }
 
             conduccionContinua += duracion;
@@ -350,7 +351,7 @@ public static class AnalizadorTacografo
                     Anotar(
                         TipoInfraccion.ConduccionDiaria,
                         momento,
-                        "Más de 9 h de conducción diaria sin ampliaciones disponibles (máximo 2 por semana).");
+                        Textos.T("Infraccion.Diaria9"));
                 }
             }
 
@@ -358,7 +359,7 @@ public static class AnalizadorTacografo
                 Cruza(conduccionDiaria, duracion, ReglasUE.ConduccionDiariaAmpliada, out TimeSpan hasta10))
             {
                 marcadaDiaria = true;
-                Anotar(TipoInfraccion.ConduccionDiaria, inicio + hasta10, "Más de 10 h de conducción diaria.");
+                Anotar(TipoInfraccion.ConduccionDiaria, inicio + hasta10, Textos.T("Infraccion.Diaria10"));
             }
 
             conduccionDiaria += duracion;
@@ -372,12 +373,12 @@ public static class AnalizadorTacografo
 
             if (Cruza(semanal, duracion, ReglasUE.ConduccionSemanalMaxima, out TimeSpan hastaSemanal))
             {
-                Anotar(TipoInfraccion.ConduccionSemanal, inicio + hastaSemanal, "Más de 56 h de conducción en la semana.");
+                Anotar(TipoInfraccion.ConduccionSemanal, inicio + hastaSemanal, Textos.T("Infraccion.Semanal"));
             }
 
             if (Cruza(semanal + anterior, duracion, ReglasUE.ConduccionBisemanalMaxima, out TimeSpan hastaBisemanal))
             {
-                Anotar(TipoInfraccion.ConduccionBisemanal, inicio + hastaBisemanal, "Más de 90 h de conducción en dos semanas seguidas.");
+                Anotar(TipoInfraccion.ConduccionBisemanal, inicio + hastaBisemanal, Textos.T("Infraccion.Bisemanal"));
             }
 
             conduccionPorSemana[lunes] = semanal + duracion;
