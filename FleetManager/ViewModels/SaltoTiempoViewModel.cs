@@ -111,7 +111,12 @@ public sealed class SaltoTiempoViewModel : ObjetoObservable, IDisposable
                 return;
             }
 
-            Mensaje = await EsperarHora(objetivo)
+            bool hecho = await EsperarHora(objetivo);
+
+            // La consola se cierra ahora: justo tras el salto el juego no recoge la tecla.
+            await control.CerrarConsola();
+
+            Mensaje = hecho
                 ? Textos.T("Salto.Hecho", FechaJuego.TextoDiaYHora(servicio.Datos.HoraJuego))
                 : Textos.T("Salto.NoCambio");
         }

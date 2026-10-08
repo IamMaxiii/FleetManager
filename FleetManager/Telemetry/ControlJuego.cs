@@ -28,9 +28,18 @@ public interface IControlJuego
     /// <summary>Activa la consola en config.cfg. Solo con el juego cerrado (al cerrarse, el juego reescribe el archivo).</summary>
     ResultadoActivacion ActivarConsola();
 
-    /// <summary>Pone el juego en primer plano, abre la consola, escribe el comando y la cierra.</summary>
+    /// <summary>
+    /// Pone el juego en primer plano, abre la consola y escribe el comando (la consola se
+    /// queda abierta: se cierra con <see cref="CerrarConsola"/> cuando el comando ya ha hecho efecto).
+    /// </summary>
     /// <returns>Falso si no se encuentra la ventana del juego.</returns>
     Task<bool> EnviarComando(string comando);
+
+    /// <summary>
+    /// Cierra la consola. Hay que llamarlo cuando el juego ya ha procesado el comando: justo
+    /// después del salto de hora el juego está ocupado y no recoge la tecla.
+    /// </summary>
+    Task CerrarConsola();
 }
 
 /// <summary>
@@ -124,6 +133,39 @@ public sealed class ControlJuego : IControlJuego
 
     public async Task<bool> EnviarComando(string comando)
     {
+        if (!await PonerJuegoDelante())
+        {
+            return false;
+        }
+
+        await Pulsar(TeclaConsola);
+        await Task.Delay(400); // que se abra la consola
+
+        foreach (char letra in comando)
+        {
+            await Escribir(letra);
+        }
+
+        await Task.Delay(100);
+        await Pulsar(TeclaIntro);
+
+        registro.Info($"Comando enviado a la consola del juego: {comando}");
+        return true;
+    }
+
+    public async Task CerrarConsola()
+    {
+        if (await PonerJuegoDelante())
+        {
+            await Task.Delay(500); // margen para que el juego termine con el comando
+            await Pulsar(TeclaConsola);
+            registro.Info("Consola del juego cerrada.");
+        }
+    }
+
+    /// <summary>Pone el juego en primer plano (restaurándolo si está minimizado); falso si no está abierto.</summary>
+    private static async Task<bool> PonerJuegoDelante()
+    {
         IntPtr ventana = Process.GetProcessesByName(NombreProceso)
             .Select(p => p.MainWindowHandle)
             .FirstOrDefault(h => h != IntPtr.Zero);
@@ -140,21 +182,6 @@ public sealed class ControlJuego : IControlJuego
 
         SetForegroundWindow(ventana);
         await Task.Delay(600); // que el juego tome el foco y salga de la pausa
-
-        await Pulsar(TeclaConsola);
-        await Task.Delay(400); // que se abra la consola
-
-        foreach (char letra in comando)
-        {
-            await Escribir(letra);
-        }
-
-        await Task.Delay(100);
-        await Pulsar(TeclaIntro);
-        await Task.Delay(300);
-        await Pulsar(TeclaConsola); // cerrar la consola
-
-        registro.Info($"Comando enviado a la consola del juego: {comando}");
         return true;
     }
 

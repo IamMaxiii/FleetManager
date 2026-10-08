@@ -88,6 +88,20 @@ public sealed class SaltoTiempoViewModelTests : IDisposable
         await salto.SaltarDuracion(TimeSpan.FromHours(11));
 
         Assert.StartsWith("La hora del juego no ha cambiado", salto.Mensaje);
+        Assert.Equal(["comando", "cerrar"], control.Pasos); // la consola se cierra igualmente
+    }
+
+    [Fact]
+    public async Task La_consola_se_cierra_una_vez_despues_de_que_cambie_la_hora()
+    {
+        DateTime? horaAlCerrar = null;
+        control.AlCerrar = () => horaAlCerrar = servicio.Datos.HoraJuego;
+        SaltoTiempoViewModel salto = Crear();
+
+        await salto.SaltarDuracion(TimeSpan.FromHours(9));
+
+        Assert.Equal(["comando", "cerrar"], control.Pasos);
+        Assert.Equal(Inicio.AddHours(9), horaAlCerrar); // cuando se cierra, la hora ya ha saltado
     }
 
     [Fact]
@@ -165,11 +179,24 @@ public sealed class SaltoTiempoViewModelTests : IDisposable
             return ResultadoActivacion.Hecho;
         }
 
+        /// <summary>Lo que ha pasado con la consola, en orden ("comando", "cerrar").</summary>
+        public List<string> Pasos { get; } = [];
+
         public Task<bool> EnviarComando(string comando)
         {
             Comandos.Add(comando);
+            Pasos.Add("comando");
             AlRecibirComando(comando);
             return Task.FromResult(true);
+        }
+
+        public Action AlCerrar { get; set; } = () => { };
+
+        public Task CerrarConsola()
+        {
+            Pasos.Add("cerrar");
+            AlCerrar();
+            return Task.CompletedTask;
         }
     }
 }
