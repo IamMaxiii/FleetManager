@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+    <!-- Colores de las actividades del tacógrafo.
+         Se crean una sola vez y se comparten en toda la aplicación.
+         po:Freeze="True" los congela: no se pueden modificar y WPF los dibuja más rápido. -->
+    <SolidColorBrush x:Key="Pincel.Conduccion"     Color="#C62828" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.OtrosTrabajos"  Color="#EF6C00" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Disponibilidad" Color="#1E88E5" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Descanso"       Color="#2E7D32" po:Freeze="True" />
+
+    <!-- Colores generales de la interfaz. -->
+    <SolidColorBrush x:Key="Pincel.Fondo"          Color="#1E1E1E" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Panel"          Color="#2B2B2B" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Texto"          Color="#F0F0F0" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.TextoSecundario" Color="#A0A0A0" po:Freeze="True" />
+
+    <!-- Botones. -->
+    <SolidColorBrush x:Key="Pincel.Boton"          Color="#3A3A3A" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BotonEncima"    Color="#4A4A4A" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BotonPulsado"   Color="#555555" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Borde"          Color="#555555" po:Freeze="True" />
+
+    <!-- Menú lateral, campos de texto y barras. -->
+    <SolidColorBrush x:Key="Pincel.Lateral"        Color="#181818" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Seleccion"      Color="#33475B" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Campo"          Color="#1A1A1A" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BarraFondo"     Color="#3A3A3A" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BarraNormal"    Color="#1E88E5" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BarraAtencion"  Color="#EF6C00" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BarraAgotada"   Color="#E53935" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.BarraObjetivo"  Color="#43A047" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Informacion"    Color="#64B5F6" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Urgente"        Color="#E53935" po:Freeze="True" />
+
+    <!-- Colores del estado de conexión con el juego. -->
+    <SolidColorBrush x:Key="Pincel.Conectado"      Color="#2E7D32" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Desconectado"   Color="#757575" po:Freeze="True" />
+    <SolidColorBrush x:Key="Pincel.Aviso"          Color="#EF6C00" po:Freeze="True" />
+
+</ResourceDictionary>

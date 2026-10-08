@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Programa aparte que genera el mapa del juego en teselas con ts-map. FleetManager
+    lo lanza y lee su progreso; al terminar, Windows libera la memoria (unos 600 MB)
+    y cierra los archivos del juego que ts-map deja abiertos.
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FleetManager.MapaJuego</RootNamespace>
+    <AssemblyName>FleetManager.GeneradorMapa</AssemblyName>
+    <!-- ts-map usa una biblioteca nativa de 64 bits. -->
+    <PlatformTarget>x64</PlatformTarget>
+    <SatelliteResourceLanguages>es</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Las cuentas de las teselas son las mismas que usa FleetManager para mostrarlas. -->
+    <Compile Include="..\FleetManager\MapaJuego\TeselasMapa.cs" Link="TeselasMapa.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ext\ts-map\TsMap.csproj" />
+    <!-- Mismo conjunto de .NET que FleetManager (WPF): al publicar los dos en la misma
+         carpeta comparten los archivos de .NET sin versiones distintas de System.Drawing. -->
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,99 @@
+<Window x:Class="FleetManager.Views.MiniTacografoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:FleetManager.ViewModels"
+        xmlns:vistas="clr-namespace:FleetManager.Views"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        Title="Mini tacógrafo"
+        Width="270"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False">
+
+    <!-- Siempre encima, sin bordes, fuera de la barra de tareas y sin quitar el foco al juego.
+         Se arrastra con el botón izquierdo; el derecho abre el menú. -->
+
+    <Window.Resources>
+        <vistas:MarcaHecha x:Key="MarcaHecha" />
+        <vistas:NuloAOculto x:Key="NuloAOculto" />
+    </Window.Resources>
+
+    <Border Background="#F01E1E1E"
+            BorderBrush="{StaticResource Pincel.Borde}"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="12,10"
+            DataContext="{Binding Tacografo}">
+
+        <Border.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Descanso" Command="{Binding ComandoDescanso}" />
+                <MenuItem Header="Disponibilidad" Command="{Binding ComandoDisponibilidad}" />
+                <MenuItem Header="Otros trabajos" Command="{Binding ComandoOtrosTrabajos}" />
+                <MenuItem Header="Conducción" Command="{Binding ComandoConduccion}" />
+                <Separator />
+                <MenuItem Header="Ocultar mini tacógrafo" Click="Ocultar_Click" />
+            </ContextMenu>
+        </Border.ContextMenu>
+
+        <StackPanel>
+            <!-- Velocidad y límite -->
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Velocidad}" FontSize="30" FontWeight="Bold" Style="{StaticResource TextoVelocidad}" />
+                    <TextBlock Text="km/h" Margin="6,0,0,5" VerticalAlignment="Bottom" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding LimiteVelocidad}" Foreground="{StaticResource Pincel.TextoSecundario}" VerticalAlignment="Center" />
+                    <TextBlock Style="{StaticResource SimboloPeligro}" FontSize="22" Margin="6,0,0,0" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Actividad -->
+            <Border Style="{StaticResource FranjaActividad}" CornerRadius="5" Padding="10,5" Margin="0,6,0,0">
+                <Grid>
+                    <TextBlock Text="{Binding NombreActividad}" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="{Binding TiempoActividad}" Foreground="White" HorizontalAlignment="Right" />
+                </Grid>
+            </Border>
+
+            <!-- Siguiente parada y pausa -->
+            <Grid Margin="0,8,0,0">
+                <TextBlock Foreground="{StaticResource Pincel.Texto}">
+                    <Run Text="Parada en" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    <Run Text="{Binding SiguienteParada, Mode=OneWay}" FontWeight="SemiBold" />
+                </TextBlock>
+                <TextBlock HorizontalAlignment="Right" Foreground="{StaticResource Pincel.Texto}">
+                    <Run Text="Pausa" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    <Run Text="{Binding MarcaPausa15, Mode=OneWay, Converter={StaticResource MarcaHecha}}" FontWeight="Bold" />
+                    <Run Text="{Binding MarcaPausa30, Mode=OneWay, Converter={StaticResource MarcaHecha}}" FontWeight="Bold" />
+                </TextBlock>
+            </Grid>
+
+            <!-- Faltas -->
+            <TextBlock Margin="0,4,0,0" Foreground="{StaticResource Pincel.TextoSecundario}">
+                <Run Text="Faltas:" />
+                <Run Text="{Binding FaltasJornada, Mode=OneWay}" Foreground="{StaticResource Pincel.Texto}" />
+            </TextBlock>
+
+            <!-- Aviso más urgente (solo si hay alguno) -->
+            <TextBlock DataContext="{Binding AvisoPrincipal}"
+                       Text="{Binding Texto}"
+                       Style="{StaticResource TextoAviso}"
+                       FontSize="11"
+                       Margin="0,6,0,0">
+                <TextBlock.Visibility>
+                    <Binding Converter="{StaticResource NuloAOculto}" />
+                </TextBlock.Visibility>
+            </TextBlock>
+        </StackPanel>
+    </Border>
+</Window>

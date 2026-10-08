@@ -1,0 +1,269 @@
+<UserControl x:Class="FleetManager.Views.SeccionInicio"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:FleetManager.ViewModels"
+             xmlns:vistas="clr-namespace:FleetManager.Views"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
+
+    <!-- DataContext: MainViewModel (usa Inicio, Tacografo y Camion). -->
+
+    <UserControl.Resources>
+        <vistas:NuloAOculto x:Key="NuloAOculto" />
+        <BooleanToVisibilityConverter x:Key="SiNoAVisibilidad" />
+
+        <!-- Botón pequeño encima del mapa. -->
+        <Style x:Key="BotonMapa" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#E62B2B2B" />
+            <Setter Property="MinWidth" Value="34" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="330" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= Mapa ================= -->
+        <Border CornerRadius="8" ClipToBounds="True" Background="#161616">
+            <Grid>
+                <vistas:LienzoMapa x:Name="Lienzo"
+                                   Recorrido="{Binding Inicio.Recorrido}"
+                                   VersionRecorrido="{Binding Inicio.VersionRecorrido}"
+                                   MapaJuego="{Binding MapaJuego}"
+                                   VersionMapaJuego="{Binding MapaJuego.Version}"
+                                   HayPosicion="{Binding Inicio.HayPosicion}"
+                                   PosicionX="{Binding Inicio.PosicionX}"
+                                   PosicionZ="{Binding Inicio.PosicionZ}"
+                                   Rumbo="{Binding Inicio.Rumbo}"
+                                   SeguirCamion="{Binding Inicio.SeguirCamion}" />
+
+                <!-- Preparar o actualizar el mapa del juego (abajo a la izquierda). -->
+                <Border DataContext="{Binding MapaJuego}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Margin="12"
+                        MaxWidth="360"
+                        Padding="14,10"
+                        CornerRadius="6"
+                        Background="#F02B2B2B">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <!-- Solo se ve si falta el mapa, si hay que actualizarlo, mientras se prepara o con un mensaje. -->
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Disponible}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding NecesitaActualizar}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Generando}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel>
+                        <!-- Sin generar nada todavía -->
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Generando}" Value="False" />
+                                                <Condition Binding="{Binding Disponible}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="Mapa del juego" FontWeight="SemiBold" Foreground="{StaticResource Pincel.Texto}" />
+                            <TextBlock Text="Prepáralo una vez para ver las carreteras y ciudades del juego debajo de tu recorrido."
+                                       TextWrapping="Wrap" Margin="0,4,0,8" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                            <Button Content="Preparar el mapa" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
+                        </StackPanel>
+
+                        <!-- El juego ha cambiado -->
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Generando}" Value="False" />
+                                                <Condition Binding="{Binding NecesitaActualizar}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="Tu juego ha cambiado (actualización o DLC) desde que se preparó el mapa."
+                                       TextWrapping="Wrap" Margin="0,0,0,8" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                            <Button Content="Actualizar el mapa" Command="{Binding ComandoPreparar}" HorizontalAlignment="Left" Margin="0" />
+                        </StackPanel>
+
+                        <!-- Preparándose -->
+                        <StackPanel Visibility="{Binding Generando, Converter={StaticResource SiNoAVisibilidad}}">
+                            <TextBlock Text="{Binding TextoProgreso}" TextWrapping="Wrap" Foreground="{StaticResource Pincel.Texto}" />
+                            <ProgressBar Style="{StaticResource Barra}" Value="{Binding Progreso, Mode=OneWay}" Margin="0,8" />
+                            <Button Content="Cancelar" Command="{Binding ComandoCancelar}" HorizontalAlignment="Left" Margin="0" />
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding Mensaje}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{StaticResource Pincel.Informacion}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Controles arriba a la derecha. -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="12">
+                    <Border Background="#E62B2B2B" CornerRadius="4" Padding="10,4">
+                        <CheckBox Content="Seguir camión" IsChecked="{Binding Inicio.SeguirCamion}" Style="{StaticResource Interruptor}" />
+                    </Border>
+                    <Button Content="+" Style="{StaticResource BotonMapa}" Click="Acercar_Click" ToolTip="Acercar (también con la rueda del ratón)" />
+                    <Button Content="−" Style="{StaticResource BotonMapa}" Click="Alejar_Click" ToolTip="Alejar" />
+                    <Button Content="Ver todo" Style="{StaticResource BotonMapa}" Click="VerTodo_Click" ToolTip="Encuadrar todo lo conducido" />
+                </StackPanel>
+
+                <!-- Coordenadas abajo a la derecha. -->
+                <TextBlock Text="{Binding Inicio.Coordenadas}"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="12"
+                           FontSize="11"
+                           Foreground="{StaticResource Pincel.TextoSecundario}" />
+            </Grid>
+        </Border>
+
+        <!-- ================= Resumen a la derecha ================= -->
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Actividad, velocidad y siguiente parada -->
+                <Border Style="{StaticResource FranjaActividad}" DataContext="{Binding Tacografo}" CornerRadius="8" Padding="16,12">
+                    <StackPanel>
+                        <Grid>
+                            <TextBlock Text="{Binding NombreActividad}" FontSize="18" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="{Binding TiempoActividad}" FontSize="18" Foreground="White" HorizontalAlignment="Right" />
+                        </Grid>
+                        <Grid Margin="0,8,0,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Velocidad}" FontSize="24" FontWeight="Bold" Style="{StaticResource TextoVelocidad}" />
+                                <TextBlock Text="km/h" Foreground="White" Opacity="0.85" Margin="6,0,0,4" VerticalAlignment="Bottom" />
+                                <TextBlock Style="{StaticResource SimboloPeligro}" FontSize="20" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel HorizontalAlignment="Right">
+                                <TextBlock Text="Siguiente parada" Foreground="White" Opacity="0.85" FontSize="11" HorizontalAlignment="Right" />
+                                <TextBlock Text="{Binding SiguienteParada}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Aviso más urgente -->
+                <Border Background="{StaticResource Pincel.Panel}" CornerRadius="6" Padding="14,8" Margin="0,10,0,0"
+                        DataContext="{Binding Tacografo.AvisoPrincipal}"
+                        Visibility="{Binding Converter={StaticResource NuloAOculto}}">
+                    <TextBlock Text="{Binding Texto}" Style="{StaticResource TextoAviso}" />
+                </Border>
+
+                <!-- Jornada -->
+                <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding Tacografo}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding TextoJornada}" Style="{StaticResource TituloPanel}" />
+                        <WrapPanel>
+                            <Button Content="Abrir jornada" Command="{Binding ComandoAbrirJornada}" />
+                            <Button Content="Cerrar jornada" Command="{Binding ComandoCerrarJornada}" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Trayecto en curso -->
+                <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding Tacografo}">
+                    <StackPanel>
+                        <TextBlock Text="Trayecto en curso" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{Binding Trayecto}" Style="{StaticResource Valor}" />
+                        <TextBlock Text="{Binding DatosTrayecto}" Style="{StaticResource Valor}" FontSize="11" Foreground="{StaticResource Pincel.TextoSecundario}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Encargo -->
+                <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding Camion}">
+                    <StackPanel>
+                        <TextBlock Text="Encargo" Style="{StaticResource TituloPanel}" />
+                        <TextBlock Text="{Binding Ruta}" Style="{StaticResource Valor}" />
+                        <StackPanel Visibility="{Binding HayEncargo, Converter={StaticResource SiNoAVisibilidad}}">
+                            <TextBlock Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
+                                <Run Text="{Binding Carga, Mode=OneWay}" />
+                                <Run Text="·" />
+                                <Run Text="{Binding Peso, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource Valor}" Foreground="{StaticResource Pincel.TextoSecundario}">
+                                <Run Text="Entrega antes de" />
+                                <Run Text="{Binding Entrega, Mode=OneWay}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Saltar tiempo con la consola del juego -->
+                <Border Style="{StaticResource Panel}" Margin="0,10,0,0" DataContext="{Binding SaltoTiempo}">
+                    <StackPanel>
+                        <TextBlock Text="Saltar tiempo" Style="{StaticResource TituloPanel}" />
+
+                        <!-- Sin consola: explicación y botón para activarla. -->
+                        <StackPanel>
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ConsolaActivada}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="Hace falta la consola del juego. Se activa con el juego cerrado."
+                                       Style="{StaticResource Valor}"
+                                       Foreground="{StaticResource Pincel.TextoSecundario}" />
+                            <Button Content="Activar la consola" Command="{Binding ComandoActivarConsola}" HorizontalAlignment="Left" Margin="0,6,0,0" />
+                        </StackPanel>
+
+                        <!-- Con consola: botones de salto. -->
+                        <StackPanel Visibility="{Binding ConsolaActivada, Converter={StaticResource SiNoAVisibilidad}}">
+                            <WrapPanel>
+                                <Button Content="Saltar 9 h" Command="{Binding ComandoSaltar9}" ToolTip="Descanso diario reducido" />
+                                <Button Content="Saltar 11 h" Command="{Binding ComandoSaltar11}" ToolTip="Descanso diario normal" />
+                            </WrapPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Hasta las" Style="{StaticResource Etiqueta}" />
+                                <TextBox Grid.Column="1" Text="{Binding HoraDestino, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Column="2" Content="Saltar" Command="{Binding ComandoSaltarHasta}" HorizontalAlignment="Left" Margin="8,0,0,0" />
+                            </Grid>
+                            <TextBlock Text="Durante el salto, FleetManager teclea en el juego: no toques el teclado."
+                                       FontSize="11"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,0"
+                                       Foreground="{StaticResource Pincel.TextoSecundario}" />
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding Mensaje}" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{StaticResource Pincel.Informacion}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    ts-map (https://github.com/dariowouters/ts-map), licencia MIT (ver LICENSE).
+    Lee el mapa de los archivos del juego. Es código de otro autor: no se modifica;
+    solo se compila aquí para .NET 10 (el original es para .NET Framework 4.7.2).
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>TsMap</RootNamespace>
+    <AssemblyName>TsMap</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Avisos del código original que no vamos a tocar. -->
+    <NoWarn>$(NoWarn);CS0168;CS0169;CS0219;CS0414;CS0649;CS8981;CA1416;SYSLIB0014;CS0618;CA2022</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- El código de TsMap\ se incluye solo (está en la carpeta del proyecto). -->
+    <!-- Biblioteca nativa de descompresión que usa ts-map (64 bits). -->
+    <None Include="libdeflate.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

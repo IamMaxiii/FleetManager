@@ -1,0 +1,155 @@
+<Window x:Class="FleetManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:FleetManager.ViewModels"
+        xmlns:modelos="clr-namespace:FleetManager.Models"
+        xmlns:vistas="clr-namespace:FleetManager.Views"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        Title="FleetManager"
+        Icon="/Recursos/FleetManager.ico"
+        Width="1180" Height="820"
+        MinWidth="980" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Pincel.Fondo}">
+
+    <Window.Resources>
+        <vistas:IgualAParametro x:Key="IgualAParametro" />
+        <vistas:VisibleSiIgual x:Key="VisibleSiIgual" />
+        <BooleanToVisibilityConverter x:Key="SiNoAVisibilidad" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= Menú lateral ================= -->
+        <Border Background="{StaticResource Pincel.Lateral}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Text="FleetManager"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           Foreground="{StaticResource Pincel.Texto}"
+                           Margin="22,22,0,24" />
+
+                <!-- Parte de abajo: estado del juego, jornada, mini tacógrafo y guardado. -->
+                <StackPanel DockPanel.Dock="Bottom" Margin="22,0,16,20">
+                    <StackPanel Orientation="Horizontal" DataContext="{Binding Tacografo}">
+                        <Ellipse Width="10" Height="10" Margin="0,0,8,0" VerticalAlignment="Center">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="{StaticResource Pincel.Desconectado}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding EstadoJuego}" Value="{x:Static modelos:EstadoJuego.Detectado}">
+                                            <Setter Property="Fill" Value="{StaticResource Pincel.Conectado}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding EstadoJuego}" Value="{x:Static modelos:EstadoJuego.JuegoNoCompatible}">
+                                            <Setter Property="Fill" Value="{StaticResource Pincel.Aviso}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding EstadoJuego}" Value="{x:Static modelos:EstadoJuego.NoResponde}">
+                                            <Setter Property="Fill" Value="{StaticResource Pincel.Aviso}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding EstadoJuego}" Value="{x:Static modelos:EstadoJuego.Error}">
+                                            <Setter Property="Fill" Value="{StaticResource Pincel.Urgente}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                        <TextBlock Text="{Binding TextoEstadoJuego}" Foreground="{StaticResource Pincel.Texto}" />
+                    </StackPanel>
+                    <TextBlock DataContext="{Binding Tacografo}" Margin="18,2,0,0" FontSize="11" Foreground="{StaticResource Pincel.TextoSecundario}" TextWrapping="Wrap">
+                        <Run Text="{Binding DetalleJuego, Mode=OneWay}" />
+                        <LineBreak />
+                        <Run Text="{Binding HoraJuego, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <!-- Solo aparece si falta el plugin de telemetría en el juego (o es de otra versión). -->
+                    <StackPanel DataContext="{Binding Plugin}" Visibility="{Binding HayAviso, Converter={StaticResource SiNoAVisibilidad}}" Margin="0,10,0,0">
+                        <TextBlock Text="{Binding Aviso}" FontSize="11" TextWrapping="Wrap" Foreground="{StaticResource Pincel.Aviso}" />
+                        <Button Content="{Binding TextoBoton}"
+                                Command="{Binding ComandoInstalar}"
+                                Visibility="{Binding HayBoton, Converter={StaticResource SiNoAVisibilidad}}"
+                                HorizontalAlignment="Left"
+                                Margin="0,6,0,0" />
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding Tacografo.TextoJornada}" Margin="0,14,0,0" Foreground="{StaticResource Pincel.Texto}" />
+
+                    <CheckBox Content="Mini tacógrafo"
+                              IsChecked="{Binding MiniVisible}"
+                              Style="{StaticResource Interruptor}"
+                              Margin="0,14,0,0" />
+
+                    <TextBlock Text="{Binding TextoGuardado}" Margin="0,16,0,0" FontSize="11" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource Pincel.TextoSecundario}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ErrorGuardado}" Value="True">
+                                        <Setter Property="Foreground" Value="{StaticResource Pincel.Urgente}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- Solo aparece si hubo problemas al cargar los datos. -->
+                    <TextBlock Text="{Binding AvisoDatos}"
+                               Visibility="{Binding HayAvisoDatos, Converter={StaticResource SiNoAVisibilidad}}"
+                               Margin="0,8,0,0"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               Foreground="{StaticResource Pincel.Aviso}" />
+
+                    <Button Content="Carpeta de datos" Command="{Binding ComandoAbrirCarpetaDatos}" Margin="0,12,0,0" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <!-- Secciones -->
+                <StackPanel>
+                    <RadioButton Content="Inicio" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Inicio}}" />
+                    <RadioButton Content="Tacógrafo" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Tacografo}}" />
+                    <RadioButton Content="Camión" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Camion}}" />
+                    <RadioButton Content="Conductor" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Conductor}}" />
+                    <RadioButton Content="Historial" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Historial}}" />
+                    <RadioButton Content="Ayuda" Style="{StaticResource ElementoMenu}"
+                                 IsChecked="{Binding Seccion, Converter={StaticResource IgualAParametro}, ConverterParameter={x:Static vm:Seccion.Ayuda}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ================= Contenido ================= -->
+        <!-- Tacógrafo, Camión y Conductor se desplazan con la barra si no caben. -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="28,24">
+                <vistas:SeccionTacografo DataContext="{Binding Tacografo}"
+                                         Visibility="{Binding DataContext.Seccion, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Tacografo}}" />
+                <vistas:SeccionCamion DataContext="{Binding Camion}"
+                                      Visibility="{Binding DataContext.Seccion, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Camion}}" />
+                <vistas:SeccionConductor DataContext="{Binding Conductor}"
+                                         Visibility="{Binding DataContext.Seccion, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Conductor}}" />
+                <vistas:SeccionAyuda Visibility="{Binding DataContext.Seccion, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Ayuda}}" />
+            </Grid>
+        </ScrollViewer>
+
+        <!-- Inicio e historial ocupan toda la altura: el mapa, el árbol y la tabla tienen su propia barra. -->
+        <vistas:SeccionInicio Grid.Column="1"
+                              Margin="28,24"
+                              Visibility="{Binding Seccion, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Inicio}}" />
+
+        <vistas:SeccionHistorial Grid.Column="1"
+                                 Margin="28,24"
+                                 DataContext="{Binding Historial}"
+                                 Visibility="{Binding DataContext.Seccion, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource VisibleSiIgual}, ConverterParameter={x:Static vm:Seccion.Historial}}" />
+    </Grid>
+</Window>

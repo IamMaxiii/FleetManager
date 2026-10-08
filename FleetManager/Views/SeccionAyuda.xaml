@@ -1,0 +1,193 @@
+<UserControl x:Class="FleetManager.Views.SeccionAyuda"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Texto fijo: cómo funciona el tacógrafo y cómo planificar la jornada. Sin ViewModel. -->
+
+    <UserControl.Resources>
+        <Style x:Key="Parrafo" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="20" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="Punto" TargetType="TextBlock" BasedOn="{StaticResource Parrafo}">
+            <Setter Property="Margin" Value="14,0,0,6" />
+        </Style>
+
+        <Style x:Key="Bloque" TargetType="Border" BasedOn="{StaticResource Panel}">
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style x:Key="Muestra" TargetType="Border">
+            <Setter Property="Width" Value="14" />
+            <Setter Property="Height" Value="14" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="Margin" Value="0,3,10,0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+        <TextBlock Text="Ayuda" Style="{StaticResource TituloSeccion}" />
+
+        <!-- ===== Antes de empezar ===== -->
+        <Border Style="{StaticResource Bloque}" BorderBrush="{StaticResource Pincel.Aviso}" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Antes de empezar: ajustes del juego" Style="{StaticResource TituloPanel}" />
+                <TextBlock Style="{StaticResource Parrafo}">
+                    En Euro Truck Simulator 2, ve a <Bold>Opciones → Juego</Bold> y desactiva estas dos opciones:
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Simulación del estado de descanso</Bold> (en inglés, <Italic>Rest state simulation</Italic>): el cansancio del conductor.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Simulación de pausas obligatorias</Bold> (en inglés, <Italic>Mandatory break simulation</Italic>): las paradas que exige el juego.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Parrafo}" Margin="0,4,0,8">
+                    Si están activadas, el juego te obliga a dormir y a parar según sus propias cuentas, que no coinciden con las
+                    reglas del tacógrafo. Con FleetManager los descansos los decides tú siguiendo las reglas de abajo, y para pasar
+                    las horas de descanso puedes usar <Bold>Saltar tiempo</Bold> en Inicio (cuenta como descanso).
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Cómo se usa ===== -->
+        <Border Style="{StaticResource Bloque}">
+            <StackPanel>
+                <TextBlock Text="Cómo se usa FleetManager" Style="{StaticResource TituloPanel}" />
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Abre la jornada</Bold> al empezar a trabajar y <Bold>ciérrala</Bold> al terminar. Solo se registra
+                    con la jornada abierta.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • La actividad cambia sola: en marcha es <Bold>conducción</Bold>; parado con el motor encendido, al cabo de
+                    2 minutos pasa a <Bold>otros trabajos</Bold> (así un semáforo no corta la conducción); con el
+                    <Bold>motor apagado</Bold> es <Bold>descanso</Bold>.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • Estando parado puedes elegir la actividad con los botones de la sección Tacógrafo.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • Los trayectos se apuntan solos en el Historial, con su recorrido en el mapa.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • El mini tacógrafo se queda encima del juego para que veas el tiempo sin salir de él.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • Todo se cuenta con la <Bold>hora del juego</Bold>, no con la de tu reloj.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Actividades ===== -->
+        <Border Style="{StaticResource Bloque}">
+            <StackPanel>
+                <TextBlock Text="Las cuatro actividades" Style="{StaticResource TituloPanel}" />
+                <DockPanel Margin="0,0,0,6">
+                    <Border Style="{StaticResource Muestra}" Background="{StaticResource Pincel.Conduccion}" />
+                    <TextBlock Style="{StaticResource Parrafo}" Margin="0"><Bold>Conducción:</Bold> el camión en marcha.</TextBlock>
+                </DockPanel>
+                <DockPanel Margin="0,0,0,6">
+                    <Border Style="{StaticResource Muestra}" Background="{StaticResource Pincel.OtrosTrabajos}" />
+                    <TextBlock Style="{StaticResource Parrafo}" Margin="0"><Bold>Otros trabajos:</Bold> cargar, descargar, repostar... No cuenta como pausa.</TextBlock>
+                </DockPanel>
+                <DockPanel Margin="0,0,0,6">
+                    <Border Style="{StaticResource Muestra}" Background="{StaticResource Pincel.Disponibilidad}" />
+                    <TextBlock Style="{StaticResource Parrafo}" Margin="0"><Bold>Disponibilidad:</Bold> esperando (por ejemplo, a que te carguen). Tampoco cuenta como pausa.</TextBlock>
+                </DockPanel>
+                <DockPanel>
+                    <Border Style="{StaticResource Muestra}" Background="{StaticResource Pincel.Descanso}" />
+                    <TextBlock Style="{StaticResource Parrafo}" Margin="0"><Bold>Descanso:</Bold> lo único que cuenta como pausa o descanso.</TextBlock>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Conducción ===== -->
+        <Border Style="{StaticResource Bloque}">
+            <StackPanel>
+                <TextBlock Text="Cuánto puedes conducir" Style="{StaticResource TituloPanel}" />
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Seguido:</Bold> como máximo <Bold>4 h 30 min</Bold>. Después, pausa de <Bold>45 min</Bold>. Se puede
+                    dividir en <Bold>15 min + 30 min</Bold> (en ese orden), repartidos dentro de esas 4 h 30.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Al día:</Bold> <Bold>9 h</Bold> entre dos descansos diarios. Dos veces por semana puedes llegar a <Bold>10 h</Bold>.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>A la semana:</Bold> <Bold>56 h</Bold> (de lunes 00:00 a domingo 24:00).
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>En dos semanas seguidas:</Bold> <Bold>90 h</Bold> entre las dos.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Descansos ===== -->
+        <Border Style="{StaticResource Bloque}">
+            <StackPanel>
+                <TextBlock Text="Descansos" Style="{StaticResource TituloPanel}" />
+                <TextBlock Text="Descanso diario" FontWeight="SemiBold" Style="{StaticResource Parrafo}" />
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Normal: 11 h</Bold> seguidas.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Dividido: 3 h + 9 h</Bold> (primero la de 3 h).
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Reducido: de 9 h a menos de 11 h</Bold>. Como mucho 3 veces entre dos descansos semanales.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • Tiene que estar terminado <Bold>dentro de las 24 h</Bold> siguientes al final del descanso anterior.
+                    Es decir: jornada (conducción, pausas y trabajos) + descanso diario ≤ 24 h.
+                </TextBlock>
+
+                <TextBlock Text="Descanso semanal" FontWeight="SemiBold" Style="{StaticResource Parrafo}" Margin="0,8,0,8" />
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>Normal: 45 h</Bold>. <Bold>Reducido: 24 h</Bold>.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • Hay que empezarlo como tarde al acabar <Bold>6 periodos de 24 h</Bold> desde el semanal anterior.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • En dos semanas seguidas: <Bold>dos normales</Bold>, o <Bold>uno normal y uno reducido</Bold>.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Ejemplo ===== -->
+        <Border Style="{StaticResource Bloque}">
+            <StackPanel>
+                <TextBlock Text="Ejemplo de jornada" Style="{StaticResource TituloPanel}" />
+                <TextBlock Style="{StaticResource Punto}">• <Bold>06:00</Bold> abres la jornada y conduces.</TextBlock>
+                <TextBlock Style="{StaticResource Punto}">• <Bold>10:30</Bold> llevas 4 h 30: paras, apagas el motor y descansas 45 min.</TextBlock>
+                <TextBlock Style="{StaticResource Punto}">• <Bold>11:15</Bold> vuelves a conducir otras 4 h 30 (ya llevas 9 h en el día).</TextBlock>
+                <TextBlock Style="{StaticResource Punto}">• <Bold>15:45</Bold> cierras la jornada y haces el descanso diario de 11 h (por ejemplo, con Saltar 11 h).</TextBlock>
+                <TextBlock Style="{StaticResource Punto}">• <Bold>02:45</Bold> del día siguiente puedes empezar otra jornada.</TextBlock>
+                <TextBlock Style="{StaticResource Parrafo}" Margin="0,6,0,0" Foreground="{StaticResource Pincel.TextoSecundario}">
+                    Consejo: mira "Siguiente parada" en el mini tacógrafo y busca un área de servicio un poco antes de que llegue a cero.
+                    FleetManager te avisa 15 minutos antes de la parada obligatoria y una hora antes del descanso diario.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== Faltas ===== -->
+        <Border Style="{StaticResource Bloque}" Margin="0">
+            <StackPanel>
+                <TextBlock Text="Faltas" Style="{StaticResource TituloPanel}" />
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>De velocidad:</Bold> ir por encima del límite (con 0,5 km/h de margen) durante 60 segundos. A los 10 s
+                    la velocidad se pone en rojo y a los 30 s aparece el símbolo de peligro.
+                </TextBlock>
+                <TextBlock Style="{StaticResource Punto}">
+                    • <Bold>De conducción:</Bold> pasarte de cualquiera de los límites de conducción (por ejemplo, seguir
+                    conduciendo después de 4 h 30 sin pausa).
+                </TextBlock>
+                <TextBlock Style="{StaticResource Parrafo}" Margin="0,6,0,0" Foreground="{StaticResource Pincel.TextoSecundario}">
+                    Las faltas se apuntan en el trayecto y se ven en el Historial.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

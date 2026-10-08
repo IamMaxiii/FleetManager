@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/ext/" />
+  <Folder Name="/ext/ts-map/">
+    <Project Path="ext/ts-map/TsMap.csproj" />
+  </Folder>
+  <Folder Name="/GeneradorMapa/">
+    <Project Path="GeneradorMapa/FleetManager.GeneradorMapa.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/FleetManager.Tests.csproj" />
+  </Folder>
+  <Project Path="FleetManager/FleetManager.csproj" />
+</Solution>

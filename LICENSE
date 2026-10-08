@@ -1,0 +1,24 @@
+FleetManager
+Copyright (c) 2026 IamMaxiii. Todos los derechos reservados.
+
+Se permite descargar, instalar y usar FleetManager gratis, para uso personal.
+
+El código fuente se publica solo para que se pueda consultar. Sin permiso previo
+y por escrito del autor NO se permite:
+
+  - copiar el código fuente, entero o en parte, ni usarlo en otros proyectos;
+  - modificarlo o crear obras derivadas a partir de él;
+  - redistribuir, vender o publicar el programa o su código, modificado o no.
+
+FLEETMANAGER SE OFRECE "TAL CUAL", SIN GARANTÍAS DE NINGÚN TIPO. EL AUTOR NO SE
+HACE RESPONSABLE DE NINGÚN DAÑO DERIVADO DE SU USO.
+
+-------------------------------------------------------------------------------
+Componentes de terceros (no están cubiertos por esta licencia; conservan la suya):
+
+  - ts-map (ext/ts-map), de dariowouters: licencia MIT, ver ext/ts-map/LICENSE.
+  - scs-sdk-plugin (lib/SCSSdkClient.dll y lib/plugin/scs-telemetry.dll), de
+    RenCloud: licencia MIT, ver lib/plugin/LICENSE-scs-sdk-plugin.txt.
+
+Euro Truck Simulator 2 es una marca de SCS Software. FleetManager es un proyecto
+de un aficionado, sin relación con SCS Software.

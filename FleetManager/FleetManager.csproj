@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>FleetManager</RootNamespace>
+    <AssemblyName>FleetManager</AssemblyName>
+    <Product>FleetManager</Product>
+    <Version>1.0.0</Version>
+    <NeutralLanguage>es-ES</NeutralLanguage>
+    <!-- Al publicar, solo los textos de .NET en español (no 13 idiomas). -->
+    <SatelliteResourceLanguages>es</SatelliteResourceLanguages>
+    <!-- Logo (se crea con herramientas\crear-logo.ps1). -->
+    <ApplicationIcon>Recursos\FleetManager.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Plugin de telemetría para el juego (lo instala FleetManager) y licencias de terceros. -->
+  <ItemGroup>
+    <None Include="..\lib\plugin\scs-telemetry.dll" Link="plugin\scs-telemetry.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\lib\plugin\LICENSE-scs-sdk-plugin.txt" Link="licencias\scs-sdk-plugin.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\ext\ts-map\LICENSE" Link="licencias\ts-map.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- El mismo icono para las ventanas. -->
+    <Resource Include="Recursos\FleetManager.ico" />
+  </ItemGroup>
+
+  <!-- Librería del SDK de telemetría (scs-sdk-plugin). Compilada para
+       .NET Framework 4.8; .NET 10 la carga sin problemas. -->
+  <ItemGroup>
+    <Reference Include="SCSSdkClient">
+      <HintPath>..\lib\SCSSdkClient.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <!-- Programa aparte que genera el mapa del juego (con ts-map). Se copia junto a
+       FleetManager.exe; FleetManager no usa ts-map directamente. -->
+  <ItemGroup>
+    <!-- Solo para que se compile antes; su código no se usa desde aquí. -->
+    <ProjectReference Include="..\GeneradorMapa\FleetManager.GeneradorMapa.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <!-- Después de compilar, copia el generador (y ts-map) junto a FleetManager.exe. -->
+  <Target Name="CopiarGeneradorMapa" AfterTargets="Build">
+    <ItemGroup>
+      <ArchivosGeneradorMapa Include="..\GeneradorMapa\bin\$(Configuration)\net10.0-windows\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ArchivosGeneradorMapa)" DestinationFolder="$(OutDir)%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>
